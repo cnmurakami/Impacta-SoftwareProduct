@@ -1,0 +1,158 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  font-family: 'Impact';
+  color: #567189;
+  text-align: center;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  padding-bottom: 50px;
+  background-color: rgba(221, 230, 237, 0.4);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4); /* Add a box shadow with a slight transparency */
+}
+
+form {
+  text-align: left;
+}
+
+fieldset.client-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+fieldset {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+legend {
+  width: 100%;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.float-end {
+  background-color: #567189;
+  padding: center;
+  width: 150px;
+  height: 50px;
+  float: right; /* Align the button to the right */
+  color: rgb(250, 250, 252);
+  border-radius: 7px;
+}
+
+input {
+  display: inline-block;
+  width: 300px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+#cpf,
+#cnpj,
+#Telephone,
+#Cellphone,
+#Email1,
+#Email2 {
+  width: 300px;
+  margin-bottom: 10px;
+}
+
+.button-container {
+  text-align: center;
+}
+
+.btn-outline-success {
+  background: #567189;
+  color: #ddd;
+}
+.navbar-brand {
+  font-size: large;
+  font-weight: bold;
+  color: #567189;
+}
+
+footer {
+  background-color: #567189;
+  color: white;
+  text-align: center;
+  padding: 5px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 5px 0; /* Adjust padding as needed */
+  text-align: center;
+}
+
+.container-footer {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.contact-info,
+.quick-links,
+.social-media {
+  flex: 1;
+  margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+.contact-info h4,
+.quick-links h4,
+.social-media h4,
+.copyright p {
+  margin-bottom: 10px;
+}
+
+.quick-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quick-links a,
+.social-media a {
+  color: white;
+  text-decoration: none;
+}
+
+.social-media ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.social-media i {
+  font-size: 24px;
+}
+
+.copyright {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.client-field input {
+  flex: 1;
+  margin-bottom: 10px;
+}
+
+.vehicle-container {
+  max-height: 300px; /* Set a specific height for the container */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
