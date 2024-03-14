@@ -30,14 +30,14 @@ def register():
         Complemento = request.form['Complemento']
         brazilianStates = request.form['brazilianStates']
         city = request.form['city']
-        if ((clientName and CPF) or (RazaoSocial and CNPJ)) and (Telephone or Cellphone) and Email1 and Email2 and CEP and Logradouro and Numero and brazilianStates and city:
+        if ((clientName and CPF) or (RazaoSocial and CNPJ)) and (Telephone or Cellphone) and (Email1 or Email2) and CEP:
             conn = mysql.connection
             cursor = conn.cursor()
             cursor.execute('insert into cliente (cpf, cnpj, nome, razao_social, endereco, telefone, email) VALUES (%s, %s, %s, %s, %s, %s, %s)', (CPF, CNPJ, clientName, RazaoSocial, (f'{Logradouro}, {Numero}, {Complemento}, {city} - {brazilianStates}, CEP {CEP}'), (f'{Telephone}/{Cellphone}'), Email1))
             conn.commit()
             return render_template('vehicle_registration.html')
     except:
-        return render_template('register.html')
+        return render_template('register.html'),500
 
 @app.route('/vehicleregistration', methods=['GET','POST'])
 def vehicleregistration():
