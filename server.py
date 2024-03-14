@@ -4,8 +4,8 @@ from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "impacta2024"
-app.config['MYSQL_DB'] = "teste"
+app.config['MYSQL_PASSWORD'] = "Unitario123"
+app.config['MYSQL_DB'] = "rscarautomotive"
 app.config['MYSQL_HOST'] = 'localhost'
 mysql = MySQL(app)
 
@@ -30,12 +30,11 @@ def register():
         Complemento = request.form['Complemento']
         brazilianStates = request.form['brazilianStates']
         city = request.form['city']
-        if clientName and CPF and RazaoSocial and CNPJ and Telephone and Cellphone and Email1 and Email2 and CEP and Logradouro and Numero and Complemento and brazilianStates and city:
-            # conn = mysql.connection
-            # cursor = conn.cursor()
-            # cursor.execute('insert into tbl_user (user_name, user_username, user_password) VALUES (%s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Telephone, Cellphone, Email1, Email2, CEP, Logradouro, Numero, Complemento, brazilianStates, city))
-            # conn.commit()
-            print (clientName, CPF, RazaoSocial, CNPJ, Telephone, Cellphone, Email1, Email2, CEP, Logradouro, Numero, Complemento, brazilianStates, city)
+        if ((clientName and CPF) or (RazaoSocial and CNPJ)) and (Telephone or Cellphone) and Email1 and Email2 and CEP and Logradouro and Numero and brazilianStates and city:
+            conn = mysql.connection
+            cursor = conn.cursor()
+            cursor.execute('insert into cliente (cpf, cnpj, nome, razao_social, endereco, telefone, email) VALUES (%s, %s, %s, %s, %s, %s, %s)', (CPF, CNPJ, clientName, RazaoSocial, (f'{Logradouro}, {Numero}, {Complemento}, {city} - {brazilianStates}, CEP {CEP}'), (f'{Telephone}/{Cellphone}'), Email1))
+            conn.commit()
             return render_template('vehicle_registration.html')
     except:
         return render_template('register.html')
@@ -52,4 +51,3 @@ def placeorder():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-
