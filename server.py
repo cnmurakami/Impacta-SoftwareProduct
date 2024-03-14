@@ -4,8 +4,8 @@ from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "impacta2024"
-app.config['MYSQL_DB'] = "teste"
+app.config['MYSQL_PASSWORD'] = "Unitario123"
+app.config['MYSQL_DB'] = "rscarautomotive"
 app.config['MYSQL_HOST'] = 'localhost'
 mysql = MySQL(app)
 
@@ -51,4 +51,3 @@ def placeorder():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-
