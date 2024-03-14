@@ -82,35 +82,35 @@
 
 
     <div class="container">
-      <h2>Mechanical Workshop System</h2>
+      <h2>Oficina Mecânica</h2>
 
     
-      <!-- Client Details Form -->
-      <form action="{{ url_for('vehicleregistration') }}" method="post" class="input-group mb3">
+      <!-- Client Details Form --->
+      <form id="clientForm"action="{{ url_for('register') }}" method="post" class="input-group mb3">
 
         
 
           <fieldset class="client-field">
             <legend>Client's Field</legend>
               
-          <input type="text" id="clientName" name="clientName" placeholder="Type the client Name" />
-          <input type="text" id="cpf" name="CPF" class="cpf" placeholder="CPF" />
-          <input type="text" id="RazaoSocial" name="RazaoSocial" placeholder="Razao Social" required />
-          <input type="text" id="cnpj" name="CNPJ" placeholder="CNPJ"required />
-          <input type="text" id="Telephone" name="Telephone" placeholder="Telephone"required />
-          <input type="text" id="Cellphone" name="Cellphone" placeholder="Cellphone" required />
-          <input type="email" id="Email1" name="Email1" placeholder="E-mail" required />
-          <input type="email" id="Email2" name="Email2" placeholder="E-mail" required />
+          <input type="text" id="clientName" name="clientName" placeholder="Type the client Name" required />
+          <input type="text" id="cpf" name="CPF" class="cpf" placeholder="Digite o CPF" />
+          <input type="text" id="RazaoSocial" name="RazaoSocial" placeholder="Razao Social"  />
+          <input type="text" id="cnpj" name="CNPJ" placeholder="CNPJ" placeholder="CNPJ" />
+          <input type="text" id="Telephone" name="Telephone" placeholder="Telefone">
+          <input type="text" id="Cellphone" name="Cellphone" placeholder="Celular" required/>
+          <input type="email" id="Email1" name="Email1" placeholder="Digite um e-mail" required />
+          <input type="email" id="Email2" name="Email2" placeholder="Digite um e-mail" />
           </fieldset>
 
           <fieldset class="client-address">
             <legend>Client's Address</legend>
 
 
-            <input type="text" id="CEP" name="CEP" placeholder="CEP"required />
-            <input type="text" id="Logradouro" name="Logradouro" placeholder="Logadouro"required />
-            <input type="text" id="Numero" name="Numero" placeholder="Número"required />
-            <input type="text" id="Complemento" name="Complemento" placeholder="Complemento"required />
+            <input type="text" id="CEP" name="CEP" placeholder="Digite o CEP" required/>
+            <input type="text" id="Logradouro" name="Logradouro" placeholder="Logadouro"/>
+            <input type="text" id="Numero" name="Numero" placeholder="Número" />
+            <input type="text" id="Complemento" name="Complemento" placeholder="Complemento" />
             <select id="brazilianStates" name="brazilianStates">
               <option value="AC">Acre</option>
               <option value="AL">Alagoas</option>
@@ -119,6 +119,7 @@
               <option value="BA">Bahia</option>
               <option value="CE">Ceará</option>
               <option value="DF">Distrito Federal</option>
+
               <option value="ES">Espírito Santo</option>
               <option value="GO">Goiás</option>
               <option value="MA">Maranhão</option>
@@ -140,7 +141,7 @@
               <option value="SE">Sergipe</option>
               <option value="TO">Tocantins</option>
           </select>
-            <input type="text" id="city" name="city" placeholder="Cidade"required />
+            <input type="text" id="city" name="city" placeholder="Cidade" />
             <div>
               <button type="submit" class="float-end">Register Client</button>
             </div>
@@ -153,9 +154,65 @@
       
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="static/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      //jquery_validar_cpf
+       $(document).ready(function() {
+            $('#cpf').blur(function() {
+                let cpf = $(this).val();
+                if (!isValidCPF(cpf)) {
+                    alert('CPF inválido');ß
+                }
+            });
+        });
+        
+        //jquery_validar_cnpj
+        $(document).ready(function() {
+            $('#cnpj').blur(function() {
+                let cnpj = $(this).val();
+                if (!isValidCNPJ(cnpj)) {
+                    alert('CNPJ inválido');
+                }
+            });
+        });
+
+
+        $(document).ready(function() {
+          $('#CEP').blur(function() {
+              let cep = $(this).val();
+              if (!isValidCEP(cep)) {
+                  alert('CEP inválido');
+              }
+          });
+      });
+
+      //jquery que valida se o form foi enviado ou não
+      $(document).ready(function() {
+    $('#clientForm').submit(function(event) {
+        event.preventDefault(); 
+        var formData = $(this).serialize();
+        
+        $.ajax({
+            url: '/register', 
+            method: 'POST', 
+            data: formData, 
+            success: function(response) {
+                alert('Formulário enviado com sucesso!');
+
+                $('#clientForm')[0].reset();
+            },
+            error: function(xhr, status, error) {
+                alert('Erro ao enviar o formulário. Por favor, tente novamente mais tarde.');
+            }
+        });
+    });
+});
+
+    </script>
   
   </body>
-  <footer>
+  <!-- <footer>
     <div class="container-footer">
       <div class="contact-info">
         <h4>Contact Us:</h4>
@@ -180,12 +237,12 @@
           <li>
             <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
           </li>
-          <!-- Add more social media icons as needed -->
+          <!-- Add more social media icons as needed --><!--
         </ul>
       </div>
     </div>
     <div class="copyright">
       <p>&copy; 2024 Workshop Name. All rights reserved.</p>
     </div>
-  </footer>
+  </footer> -->
 </html>
