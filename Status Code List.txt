@@ -5,4 +5,5 @@ Client:
 Server:
 550: Erro ao conectar-se ao db
 551: Erro ao salvar informações no db
+561: Requisição não localizada
 599: Erro desconhecido de servidor

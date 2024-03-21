@@ -2,6 +2,12 @@ from flask import Flask, render_template, request
 import requests
 from flask_mysqldb import MySQL
 
+#global variables
+page_index = 'home'
+page_customer_registration = 'register'
+page_customer_search = 'customerSearch'
+page_vehicle_registation = 'vehicle_registration'
+
 app = Flask(__name__)
 app.config['MYSQL_USER'] = "root"
 app.config['MYSQL_PASSWORD'] = "Unitario123"
@@ -9,13 +15,23 @@ app.config['MYSQL_DB'] = "rscarautomotive"
 app.config['MYSQL_HOST'] = 'localhost'
 mysql = MySQL(app)
 
+def pesquisar_cliente(cpf, cnpj):
+    conn = mysql.connection
+    cursor = conn.cursor()
+    cursor.execute('select * from cliente where cpf = %s or cnpj = %s', (cpf, cnpj))
+    result = cursor.fetchall()
+    cursor.close()
+    return result
+
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('home.html')
+    return render_template(f'{page_index}.html')
 
-@app.route('/register', methods=['GET','POST'])
-def register():
+@app.route(f'/{page_customer_registration}', methods=['GET','POST'])
+def register_customer():
     status_code=599
+    if request.method == 'GET':
+        return render_template(f'{page_customer_registration}.html')
     try:
         client_name = request.form['clientName']
         cpf = request.form['CPF']
@@ -34,38 +50,55 @@ def register():
         endereco = f'{logradouro}, {numero}, {complemento}, {cidade} - {estado}, CEP {cep}'
         if ((client_name and cpf) or (razao_social and cnpj)) and (telefone or celular) and (email1 or email2) and cep:
             status_code=550
-            conn = mysql.connection
-            cursor = conn.cursor()
-            cursor.execute('select * from cliente where cpf = %s or cnpj = %s', (cpf, cnpj))
-            result = cursor.fetchall()
-            cursor.close()
-            if (len(result)>0):
+            cliente_encontrado = pesquisar_cliente(cpf,cnpj)
+            if (len(cliente_encontrado)>0):
                 status_code=450
                 raise
             else:
                 status_code=551
+                conn = mysql.connection
                 cursor = conn.cursor()
-                arg=(cpf, cnpj, client_name, razao_social, endereco, telefone, email1)
-                cursor.callproc('inserir_cliente',arg)
+                arg = (cpf, cnpj, client_name, razao_social, endereco, telefone, email1)
+                cursor.callproc('inserir_cliente', arg)
                 #cursor.execute('insert into cliente (cpf, cnpj, nome, razao_social, endereco, telefone, email) VALUES (%s, %s, %s, %s, %s, %s, %s)', (CPF, CNPJ, clientName, RazaoSocial, (f'{Logradouro}, {Numero}, {Complemento}, {city} - {brazilianStates}, CEP {CEP}'), (f'{Telephone}/{Cellphone}'), Email1))
                 cursor.close()
                 conn.commit()
-            return render_template('vehicle_registration.html'), 200
+            return render_template(f'{page_vehicle_registation}.html'), 200
         else:
             status_code=460
             raise
     except:
-        return render_template('register.html'), status_code
+        return render_template(f'{page_customer_registration}.html'), status_code
 
-@app.route('/vehicleregistration', methods=['GET','POST'])
+#---WIP---
+@app.route(f'/{page_customer_search}', methods = ['GET', 'POST'])
+def search_customer():
+    if request.method == 'GET':
+        return render_template(f'{page_customer_search}')
+    status_code = 599
+    try:
+        cpf = request.form['CPF']
+        cnpj = request.form['CNPJ']
+        if cpf or cnpj:
+            status_code = status_code=550
+            resultado = pesquisar_cliente(cpf,cnpj)
+            if len(resultado)>0:
+                return render_template (f'{page_customer_search}.html', cliente = resultado), 200
+            else:
+                status_code = 561
+                raise
+    except:
+        return render_template(f'{page_customer_search}.html'), status_code
+
+
+#---NOT IMPLEMENTED---
+@app.route(f'/{page_vehicle_registation}', methods=['GET','POST'])
 def vehicleregistration():
-    return render_template('vehicle_registration.html')
+    return render_template(f'{page_vehicle_registation}.html', 501)
 
 @app.route('/order', methods=['GET','POST'])
 def placeorder():
-    return render_template('order.html')
-
-
+    return render_template('order.html', 501)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
