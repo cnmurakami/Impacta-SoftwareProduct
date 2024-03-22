@@ -18,6 +18,8 @@
 --
 -- Table structure for table `cliente`
 --
+CREATE Database rscarautomotive;
+use rscarautomotive;
 
 DROP TABLE IF EXISTS `cliente`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

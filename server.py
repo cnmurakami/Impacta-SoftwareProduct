@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import requests
 from flask_mysqldb import MySQL
+from backend import db_classes as c
 
 #global variables
 page_index = 'home'
@@ -12,7 +13,8 @@ app = Flask(__name__)
 app.config['MYSQL_USER'] = "root"
 app.config['MYSQL_PASSWORD'] = "Unitario123"
 app.config['MYSQL_DB'] = "rscarautomotive"
-app.config['MYSQL_HOST'] = 'localhost'
+# !!! Comente a linha abaixo caso esteja testando localmente !!!
+app.config['MYSQL_HOST'] = 'db' 
 mysql = MySQL(app)
 
 def pesquisar_cliente(cpf, cnpj):
