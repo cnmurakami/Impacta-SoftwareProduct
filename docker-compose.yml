@@ -1,0 +1,25 @@
+version: "1"
+services:
+
+  app:
+    build: ./
+    links:
+      - db
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.3
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Unitario123
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
