@@ -156,3 +156,65 @@ footer {
   max-height: 300px; /* Set a specific height for the container */
   overflow-y: auto; /* Enable vertical scrolling */
 }
+/* Apply styles to the search result container */
+.container {
+  margin-top: 20px;
+}
+
+/* Style for the table header */
+.table thead th {
+  background-color: #343a40; /* Dark background color */
+  color: #fff; /* White text color */
+}
+
+/* Style for alternating row colors in the table body */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f8f9fa; /* Light gray background color */
+}
+
+/* Style for table cells */
+.table td,
+.table th {
+  padding: 0.75rem; /* Adjust cell padding */
+}
+
+/* Style for pagination links */
+.pagination {
+  margin-top: 20px;
+}
+
+/* Style for pagination links */
+.page-link {
+  color: #007bff; /* Blue link color */
+}
+
+/* Style for active page link */
+.page-item.active .page-link {
+  background-color: #007bff; /* Blue background color */
+  border-color: #007bff; /* Blue border color */
+  color: #fff; /* White text color */
+}
+
+.container-result {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.table-container {
+  width: 100%; /* Adjust as needed */
+  overflow-x: auto; /* Add horizontal scrolling if needed */
+}
+
+.container-result {
+  text-align: center;
+}
+
+.container h1 {
+  text-align: center;
+}
+.container-result p {
+  text-align: center;
+}
