@@ -6,7 +6,7 @@ from backend import db_classes as c
 #global variables
 page_index = 'home'
 page_customer_registration = 'register'
-page_customer_search = 'customerSearch'
+page_customer_search = 'search'
 page_vehicle_registation = 'vehicle_registration'
 
 app = Flask(__name__)
@@ -14,13 +14,13 @@ app.config['MYSQL_USER'] = "root"
 app.config['MYSQL_PASSWORD'] = "Unitario123"
 app.config['MYSQL_DB'] = "rscarautomotive"
 # !!! Comente a linha abaixo caso esteja testando localmente !!!
-app.config['MYSQL_HOST'] = 'db' 
+#app.config['MYSQL_HOST'] = 'db' 
 mysql = MySQL(app)
 
-def pesquisar_cliente(cpf, cnpj):
+def pesquisar_cliente(cpf='', cnpj=''):
     conn = mysql.connection
     cursor = conn.cursor()
-    cursor.execute('select * from cliente where cpf = %s or cnpj = %s', (cpf, cnpj))
+    cursor.execute('select * from cliente where cpf = %s and cnpj = %s', (cpf, cnpj))
     result = cursor.fetchall()
     cursor.close()
     return result
@@ -73,24 +73,44 @@ def register_customer():
         return render_template(f'{page_customer_registration}.html'), status_code
 
 #---WIP---
-@app.route(f'/{page_customer_search}', methods = ['GET', 'POST'])
+@app.route(f'/{page_customer_search}', methods = ['GET'])
 def search_customer():
-    if request.method == 'GET':
-        return render_template(f'{page_customer_search}')
-    status_code = 599
     try:
-        cpf = request.form['CPF']
-        cnpj = request.form['CNPJ']
-        if cpf or cnpj:
+        status_code=200
+        cpf = request.args.get('CPF')
+        if cpf:
             status_code = status_code=550
-            resultado = pesquisar_cliente(cpf,cnpj)
+            resultado = pesquisar_cliente(cpf)
             if len(resultado)>0:
-                return render_template (f'{page_customer_search}.html', cliente = resultado), 200
+                status_code = 200
+                return render_template (f'{page_customer_search}.html', search_results = resultado), status_code
             else:
                 status_code = 561
                 raise
+        else:
+            status_code=200
+            return render_template (f'{page_customer_search}.html'), status_code
     except:
-        return render_template(f'{page_customer_search}.html'), status_code
+        print ("EXCEPT")
+        return render_template (f'{page_customer_search}.html'), status_code
+
+
+    # if request.method == 'GET':
+    #     return render_template(f'{page_customer_search}.html')
+    # status_code = 599
+    # try:
+    #     cpf = request.form['CPF']
+    #     cnpj = request.form['CNPJ']
+    #     if cpf or cnpj:
+    #         status_code = status_code=550
+    #         resultado = pesquisar_cliente(cpf,cnpj)
+    #         if len(resultado)>0:
+    #             return render_template (f'{page_customer_search}.html', cliente = resultado), 200
+    #         else:
+    #             status_code = 561
+    #             raise
+    # except:
+    #     return render_template(f'{page_customer_search}.html'), status_code
 
 
 #---NOT IMPLEMENTED---
