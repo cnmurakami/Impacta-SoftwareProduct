@@ -6,7 +6,7 @@ from backend import db_classes as c
 #global variables
 page_index = 'home'
 page_customer_registration = 'register'
-page_customer_search = 'customerSearch'
+page_customer_search = 'search'
 page_vehicle_registation = 'vehicle_registration'
 
 app = Flask(__name__)
@@ -14,7 +14,7 @@ app.config['MYSQL_USER'] = "root"
 app.config['MYSQL_PASSWORD'] = "Unitario123"
 app.config['MYSQL_DB'] = "rscarautomotive"
 # !!! Comente a linha abaixo caso esteja testando localmente !!!
-app.config['MYSQL_HOST'] = 'db' 
+#app.config['MYSQL_HOST'] = 'db' 
 mysql = MySQL(app)
 
 def pesquisar_cliente(cpf, cnpj):
@@ -73,24 +73,33 @@ def register_customer():
         return render_template(f'{page_customer_registration}.html'), status_code
 
 #---WIP---
-@app.route(f'/{page_customer_search}', methods = ['GET', 'POST'])
+@app.route(f'/{page_customer_search}', methods = ['GET'])
 def search_customer():
-    if request.method == 'GET':
-        return render_template(f'{page_customer_search}')
-    status_code = 599
-    try:
-        cpf = request.form['CPF']
-        cnpj = request.form['CNPJ']
-        if cpf or cnpj:
-            status_code = status_code=550
-            resultado = pesquisar_cliente(cpf,cnpj)
+    status_code = 200
+    search_param = request.args.get('procura')
+    print("Search parameter:", search_param)  # Debug print
+    if search_param:
+        # Connect to the database
+        try:
+            status_code = 550
+            conn = mysql.connection
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM cliente WHERE lower(nome) LIKE %s OR lower(email) LIKE %s OR telefone LIKE %s OR cpf LIKE %s OR cnpj LIKE %s', (f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%"))
+            resultado = cursor.fetchall()
+            cursor.close()
+            search_results = []
             if len(resultado)>0:
-                return render_template (f'{page_customer_search}.html', cliente = resultado), 200
+                status_code = 200
+                for row in resultado:
+                    search_results.append({'clientname':row[3], 'cpf':row[1], 'cnpj':row[2], 'email1':row[7], 'cellphone':row[6]})
             else:
                 status_code = 561
-                raise
-    except:
-        return render_template(f'{page_customer_search}.html'), status_code
+        except:
+            return render_template(f'{page_customer_search}.html'), status_code
+
+        return render_template(f'{page_customer_search}.html', search_results=search_results), status_code
+    else:
+        return render_template(f'{page_customer_search}.html', search_results=[]), 200
 
 
 #---NOT IMPLEMENTED---
