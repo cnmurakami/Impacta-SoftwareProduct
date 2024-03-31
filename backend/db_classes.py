@@ -125,6 +125,3 @@ class Cliente:
         info['telefone'] = self.telefone
         info['email'] = self.email
         return info
-
-# novo_cliente = Cliente(id_cliente ='0', cpf ='123', cnpj ='456', nome ='aaaa', razao_social ='bbbb', endereco ='MeuLogradouro;;000;;MeuComplmento;;MinhaCidade;;SP;;01001-000', telefone ='0000', email = 'aaa@aaa.com')
-# print (novo_cliente.send())
