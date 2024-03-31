@@ -2,6 +2,8 @@ from flask import Flask, render_template, request
 import requests
 from flask_mysqldb import MySQL
 from backend import db_classes as c
+from backend import db_config as db
+from backend import functions as f
 
 #global variables
 page_index = 'home'
@@ -10,20 +12,11 @@ page_customer_search = 'search'
 page_vehicle_registation = 'vehicle_registration'
 
 app = Flask(__name__)
-app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "Unitario123"
-app.config['MYSQL_DB'] = "rscarautomotive"
-# !!! Comente a linha abaixo caso esteja testando localmente !!!
-#app.config['MYSQL_HOST'] = 'db' 
+app.config['MYSQL_USER'] = db.user
+app.config['MYSQL_PASSWORD'] = db.password
+app.config['MYSQL_DB'] = db.db
+app.config['MYSQL_HOST'] = db.host
 mysql = MySQL(app)
-
-def pesquisar_cliente(cpf='', cnpj=''):
-    conn = mysql.connection
-    cursor = conn.cursor()
-    cursor.execute('select * from cliente where cpf = %s and cnpj = %s', (cpf, cnpj))
-    result = cursor.fetchall()
-    cursor.close()
-    return result
 
 @app.route('/', methods=['GET'])
 def home():
@@ -39,7 +32,7 @@ def register_customer():
         cpf = request.form['CPF']
         razao_social = request.form['RazaoSocial']
         cnpj = request.form['CNPJ']
-        telefone = request.form['Telephone']
+        telephone = request.form['Telephone']
         celular = request.form['Cellphone']
         email1 = request.form['Email1']
         email2 = request.form['Email2']
@@ -49,22 +42,25 @@ def register_customer():
         complemento = request.form['Complemento']
         estado = request.form['brazilianStates']
         cidade = request.form['city']
-        endereco = f'{logradouro}, {numero}, {complemento}, {cidade} - {estado}, CEP {cep}'
+        telefone = celular
+        endereco = f'{logradouro};;{numero};;{complemento};;{cidade};;{estado};;{cep}'
         if ((client_name and cpf) or (razao_social and cnpj)) and (telefone or celular) and (email1 or email2) and cep:
             status_code=550
-            cliente_encontrado = pesquisar_cliente(cpf,cnpj)
+            cliente_encontrado = f.pesquisar_cliente(cpf,cnpj)
             if (len(cliente_encontrado)>0):
                 status_code=450
                 raise
             else:
                 status_code=551
-                conn = mysql.connection
-                cursor = conn.cursor()
-                arg = (cpf, cnpj, client_name, razao_social, endereco, telefone, email1)
-                cursor.callproc('inserir_cliente', arg)
-                #cursor.execute('insert into cliente (cpf, cnpj, nome, razao_social, endereco, telefone, email) VALUES (%s, %s, %s, %s, %s, %s, %s)', (CPF, CNPJ, clientName, RazaoSocial, (f'{Logradouro}, {Numero}, {Complemento}, {city} - {brazilianStates}, CEP {CEP}'), (f'{Telephone}/{Cellphone}'), Email1))
-                cursor.close()
-                conn.commit()
+                novo_cliente = c.Cliente(cpf=cpf, cnpj=cnpj, nome=client_name, razao_social = razao_social, endereco=endereco, telefone=telefone, email=email1)
+                novo_cliente.insert()
+                # conn = mysql.connection
+                # cursor = conn.cursor()
+                # arg = (cpf, cnpj, client_name, razao_social, endereco, telefone, email1)
+                # cursor.callproc('inserir_cliente', arg)
+                # #cursor.execute('insert into cliente (cpf, cnpj, nome, razao_social, endereco, telefone, email) VALUES (%s, %s, %s, %s, %s, %s, %s)', (CPF, CNPJ, clientName, RazaoSocial, (f'{Logradouro}, {Numero}, {Complemento}, {city} - {brazilianStates}, CEP {CEP}'), (f'{Telephone}/{Cellphone}'), Email1))
+                # cursor.close()
+                # conn.commit()
             return render_template(f'{page_vehicle_registation}.html'), 200
         else:
             status_code=460
@@ -80,20 +76,31 @@ def search_customer():
     print("Search parameter:", search_param)  # Debug print
     if search_param:
         # Connect to the database
+        search_results = []
         try:
             status_code = 550
-            conn = mysql.connection
-            cursor = conn.cursor()
-            cursor.execute('SELECT * FROM cliente WHERE lower(nome) LIKE %s OR lower(email) LIKE %s OR telefone LIKE %s OR cpf LIKE %s OR cnpj LIKE %s', (f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%"))
-            resultado = cursor.fetchall()
-            cursor.close()
-            search_results = []
-            if len(resultado)>0:
+            busca_clientes = f.pesquisar_cliente_geral(search_param)
+            if len(busca_clientes)>0:
                 status_code = 200
-                for row in resultado:
-                    search_results.append({'clientname':row[3], 'cpf':row[1], 'cnpj':row[2], 'email1':row[7], 'cellphone':row[6]})
+                try:
+                    for cliente in busca_clientes:
+                        search_results.append(cliente.send())
+                except:
+                    status_code = 552
             else:
                 status_code = 561
+            # conn = mysql.connection
+            # cursor = conn.cursor()
+            # cursor.execute('SELECT * FROM cliente WHERE lower(nome) LIKE %s OR lower(email) LIKE %s OR telefone LIKE %s OR cpf LIKE %s OR cnpj LIKE %s', (f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%", f"%{search_param.lower()}%"))
+            # resultado = cursor.fetchall()
+            # cursor.close()
+            # search_results = []
+            # if len(resultado)>0:
+            #     status_code = 200
+            #     for row in resultado:
+            #         search_results.append({'clientname':row[3], 'cpf':row[1], 'cnpj':row[2], 'email1':row[7], 'cellphone':row[6]})
+            # else:
+            #     status_code = 561
         except:
             return render_template(f'{page_customer_search}.html'), status_code
 
