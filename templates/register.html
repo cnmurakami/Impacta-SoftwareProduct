@@ -4,20 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MS Car Automotive</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link
-  
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    
   </head>
   <header>
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/"
-          >RS Car Automotive</a
-        >
+        <a class="navbar-brand" href="/">MS Car Automotive</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -31,7 +32,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="/register">Cadastro</a>
             </li>
@@ -48,216 +51,185 @@
     </nav>
   </header>
   <body>
-
-
     <div class="container">
       <h2>MS Car Automotive</h2>
 
-    
-      <!-- Client Details Form -->
-      <form id="clientForm"action="{{ url_for('register') }}" method="POST" class="input-group mb3">
+      <!-- Vehicle Details Form -->
+      <form
+        id="clientVehicleForm"
+        action="{{ url_for('vehicle_registration') }}"
+        method="POST"
+        class="input-group mb3"
+      >
+        <fieldset class="client-field">
+          <legend>Cadastro de Veículo</legend>
 
-        
+          <!-- Pre-filled hidden input field for client_id -->
 
-          <fieldset class="client-field">
-            <legend>Campo Cliente</legend>
-              
-          <input type="text" id="clientName" name="clientName" placeholder="Type the client Name" required />
-          <input type="text" id="cpf" name="CPF" class="cpf" placeholder="Digite o CPF" />
-          <input type="text" id="RazaoSocial" name="RazaoSocial" placeholder="Razao Social"  />
-          <input type="text" id="cnpj" name="CNPJ" placeholder="CNPJ" placeholder="CNPJ" />
-          <input type="text" id="Telephone" name="Telephone" placeholder="Telefone">
-          <input type="text" id="Cellphone" name="Cellphone" placeholder="Celular" required/>
-          <input type="email" id="Email1" name="Email1" placeholder="Digite um e-mail" required />
-          <input type="email" id="Email2" name="Email2" placeholder="Digite um e-mail" />
-          </fieldset>
+          <input
+            type="text"
+            id="client_id"
+            name="client_id"
+            value="{{ client_id }}"
+          />
 
-          <fieldset class="client-address">
-            <legend>Endereco do Cliente</legend>
-
-
-            <input type="text" id="CEP" name="CEP" placeholder="Digite o CEP" required/>
-            <input type="text" id="Logradouro" name="Logradouro" placeholder="Logadouro"/>
-            <input type="text" id="Numero" name="Numero" placeholder="Número" />
-            <input type="text" id="Complemento" name="Complemento" placeholder="Complemento" />
-            <select id="brazilianStates" name="brazilianStates">
-              <option value="AC">Acre</option>
-              <option value="AL">Alagoas</option>
-              <option value="AP">Amapá</option>
-              <option value="AM">Amazonas</option>
-              <option value="BA">Bahia</option>
-              <option value="CE">Ceará</option>
-              <option value="DF">Distrito Federal</option>
-              <option value="ES">Espírito Santo</option>
-              <option value="GO">Goiás</option>
-              <option value="MA">Maranhão</option>
-              <option value="MT">Mato Grosso</option>
-              <option value="MS">Mato Grosso do Sul</option>
-              <option value="MG">Minas Gerais</option>
-              <option value="PA">Pará</option>
-              <option value="PB">Paraíba</option>
-              <option value="PR">Paraná</option>
-              <option value="PE">Pernambuco</option>
-              <option value="PI">Piauí</option>
-              <option value="RJ">Rio de Janeiro</option>
-              <option value="RN">Rio Grande do Norte</option>
-              <option value="RS">Rio Grande do Sul</option>
-              <option value="RO">Rondônia</option>
-              <option value="RR">Roraima</option>
-              <option value="SC">Santa Catarina</option>
-              <option value="SP">São Paulo</option>
-              <option value="SE">Sergipe</option>
-              <option value="TO">Tocantins</option>
+          <input
+            type="text"
+            id="placa"
+            name="placa"
+            placeholder="Número da placa"
+          />
+          <input
+            type="text"
+            id="cpf"
+            name="CPF"
+            class="cpf"
+            value="{{ client_id }}"
+            placeholder="CPF"
+          />
+          <input
+            type="text"
+            id="cnpj"
+            name="CNPJ"
+            value="{{ client_id }}"
+            placeholder="CNPJ"
+            required
+          />
+          <input
+            type="text"
+            id="chassi"
+            name="chassi"
+            placeholder="Chassi"
+            required
+          />
+          <input
+            type="text"
+            id="fabricante"
+            name="fabricante"
+            placeholder="Fabricante"
+            required
+          />
+          <input
+            type="texto"
+            id="modelo"
+            name="modelo"
+            placeholder="Modelo"
+            required
+          />
+          <input type="texto" id="cor" name="cor" placeholder="Cor" required />
+          <select id="yearSelect" name="year">
+            <option value="1970">Selecionar o Ano</option>
+            <option value="1971">1971</option>
+            <option value="1972">1972</option>
+            <!-- Add more years as needed -->
+            <option value="2024">2024</option>
           </select>
-            <input type="text" id="city" name="city" placeholder="Cidade" />
-            <div>
-              
-              <button type="submit" id="openModalButton" class="btn btn-primary view-button">
-                Cadastrar Cliente
-            </button>
-            </div>
-          </fieldset>
-          </div>
-          
+        </fieldset>
+
+        <div>
+          <button type="submit" id="openModalButton3" class="btn btn-primary">
+            Cadastrar Veículo
+          </button>
         </div>
-         
       </form>
-      
     </div>
 
-   <!-- Modal1-->
+    <!-- Modal3-->
 
-   <div id="exampleModal1" class="modal" tabindex="-1">
-    <div class="modal-dialog">
+    <div id="exampleModal3" class="modal" tabindex="-1">
+      <div class="modal-dialog">
         <div class="modal-content">
-           
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="clientNameMessage"></p>
-                    <br>
-                    <strong>Deseja adicionar um Veículo?</strong>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-warning">Editar</button>
-                    <button type="button" id="openRegistroVeiculo" class="btn btn-primary" onclick="openVehicleRegistration('{{ client_id }}')">
-                      Cadastrar Veículo
-                  </button>
-                </div>
-            
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmação</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p id="placaMessage"></p>
+            <br />
+            <strong>Deseja adicionar mais um Veículo?</strong>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-warning">Editar</button>
+            <button
+              type="button"
+              id="openRegistroVeiculo"
+              class="btn btn-primary"
+              onclick="openVehicleRegistration('{{ client_id }}')"
+            >
+              Cadastrar Veículo
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
- 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="static/script.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
     <script>
-      //jquery_validar_cpf
-       $(document).ready(function() {
-            $('#cpf').blur(function() {
-                let cpf = $(this).val();
-                if (!isValidCPF(cpf)) {
-                    alert('CPF inválido');ß
-                }
-            });
-        });
-        
-        //jquery_validar_cnpj
-        $(document).ready(function() {
-            $('#cnpj').blur(function() {
-                let cnpj = $(this).val();
-                if (!isValidCNPJ(cnpj)) {
-                    alert('CNPJ inválido');
-                }
-            });
-        });
-
-
-        $(document).ready(function() {
-          $('#CEP').blur(function() {
-              let cep = $(this).val();
-              if (!isValidCEP(cep)) {
-                  alert('CEP inválido');
-              }
-          });
+      $.ajax({
+        url: '/get_last_client_data',
+        method: 'GET',
+        success: function (response) {
+          // Handle the response data and populate the input fields
+          $('#client_id').val(response.client_id);
+          $('#cpf').val(response.cpf);
+          $('#cnpj').val(response.cnpj);
+        },
+        error: function (xhr, status, error) {
+          // Handle errors
+          console.error('Failed to retrieve last client data:', error);
+        },
       });
 
+      $(document).ready(function () {
+        // Bind submit event handler to the form with id 'clientForm'
+        $('#clientVehicleForm').submit(function (event) {
+          // Prevent the default form submission behavior
+          event.preventDefault();
 
+          // Serialize form data
+          var formData = $(this).serialize();
 
-    $(document).ready(function() {
-    // Bind submit event handler to the form with id 'clientForm'
-    $('#clientForm').submit(function(event) {
-        // Prevent the default form submission behavior
-        event.preventDefault();
-
-        // Serialize form data
-        var formData = $(this).serialize();
-
-        // Send form data via AJAX
-        $.ajax({
+          // Send form data via AJAX
+          $.ajax({
             url: '/register',
             method: 'POST',
             data: formData,
-            success: function(response) {
-                // Extract clientName from response
-                var clientName = response.clientName;
-                // Show modal with success message
-                openModal1(clientName);
-                // Reset the form
-                $('#clientForm')[0].reset();
+            success: function (response) {
+              // Extract clientName from response
+              var clientName = response.placa;
+              // Show modal with success message
+              openModal3(placa);
+              // Reset the form
+              $('#clientVehicleForm')[0].reset();
             },
-            error: function(xhr, status, error) {
-                // Show modal with error message
-                openModal1(null, 'Erro ao enviar o formulário. Por favor, tente novamente mais tarde.');
-            }
-        });
-    });
-});
-
-
-
-$(document).ready(function() {
-    // When the 'Cadastrar Veículo' link is clicked
-    $('#openRegistroVeiculo').click(function(event) {
-        // Prevent the default behavior of the link
-        event.preventDefault();
-        
-        // Fetch the last client ID
-        $.ajax({
-            url: '/get_last_client_data',  // Endpoint to fetch the last client ID
-            method: 'GET',
-            success: function(response) {
-                // Extract the last client ID from the response
-                var lastClientId = response.client_id; // Corrected access here
-
-                
-                // Set the value of the input field to the last client ID
-                $('#client_id_input').val(lastClientId);
-                
-                // Construct the URL with the last client ID
-                var url = '/vehicle_registration?client_id=' + lastClientId;
-                
-                // Navigate to the vehicle registration page with the last client ID
-                window.location.href = url;
+            error: function (xhr, status, error) {
+              // Show modal with error message
+              openModal3(
+                null,
+                'Erro ao enviar o formulário. Por favor, tente novamente mais tarde.'
+              );
             },
-            error: function(xhr, status, error) {
-                console.error('Error fetching last client ID:', error);
-            }
+          });
         });
-    });
-});
-
-
-
-
+      });
     </script>
-  
   </body>
-  <!-- <footer>
+  <footer>
     <div class="container-footer">
       <div class="contact-info">
         <h4>Contact Us:</h4>
@@ -282,12 +254,12 @@ $(document).ready(function() {
           <li>
             <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
           </li>
-          <Add more social media icons as needed --><!--
+          <!-- Add more social media icons as needed -->
         </ul>
       </div>
     </div>
     <div class="copyright">
       <p>&copy; 2024 Workshop Name. All rights reserved.</p>
     </div>
-  </footer> -->
+  </footer>
 </html>
