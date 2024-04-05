@@ -93,7 +93,7 @@ def search_customer():
 @app.route(f'/cliente/<id_cliente>/{page_vehicle_registation}', methods=['GET','POST'])
 def vehicle_registration(id_cliente):
     if request.method == 'GET':
-        return render_template(f'{page_vehicle_registation}.html', 200)
+        return render_template (f'{page_vehicle_registation}.html'), 200
     status_code = 200
     try:
         status_code = 561
@@ -116,12 +116,12 @@ def vehicle_registration(id_cliente):
                 status_code=551
                 novo_veiculo = c.Veiculo(id_cliente = cliente_atual.id_cliente, placa = placa, chassi = chassi, marca = marca, modelo = modelo, ano_fabricacao = ano_fabricacao, ano_modelo = ano_modelo, cor = cor)
                 novo_veiculo.salvar()
-                return render_template(f'{page_vehicle_registation}.html', 200)
+                return render_template(f'{page_vehicle_registation}.html'), 200
         else:
             status_code = 460
             raise
     except:
-        return render_template(f'{page_vehicle_registation}.html', status_code)
+        return render_template(f'{page_vehicle_registation}.html'), status_code
 
 #---NOT IMPLEMENTED---
 @app.route('/order', methods=['GET','POST'])
