@@ -14,7 +14,7 @@ app.config['MYSQL_DB'] = db.db
 app.config['MYSQL_HOST'] = db.host
 mysql = MySQL(app)
 
-def incluir_resultados(resultado):
+def criar_lista_cliente(resultado):
     lista_clientes = []
     for i in resultado:
         lista_clientes.append(c.Cliente(i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7]))
@@ -27,7 +27,24 @@ def pesquisar_cliente(cpf='', cnpj=''):
     resultado = cursor.fetchall()
     cursor.close()
     if len(resultado)>0:
-        return incluir_resultados(resultado)
+        return criar_lista_cliente(resultado)
+    else:
+        return []
+
+def criar_lista_veiculo(resultado):
+    lista_veiculos = []
+    for i in resultado:
+        lista_veiculos.append(c.Veiculo(i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7],i[8]))
+    return lista_veiculos
+
+def pesquisar_veiculo(placa,chassi):
+    conn = mysql.connection
+    cursor = conn.cursor()
+    cursor.execute('select * from cliente where placa = %s or chassi = %s', (placa, chassi))
+    resultado = cursor.fetchall()
+    cursor.close()
+    if len(resultado)>0:
+        return criar_lista_veiculo(resultado)
     else:
         return []
 
