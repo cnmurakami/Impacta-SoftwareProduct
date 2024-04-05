@@ -53,7 +53,7 @@ def register_customer():
             else:
                 status_code=551
                 novo_cliente = c.Cliente(cpf=cpf, cnpj=cnpj, nome=client_name, razao_social = razao_social, endereco=endereco, telefone=telefone, email=email1)
-                novo_cliente.insert()
+                novo_cliente.salvar()
             return render_template(f'{page_vehicle_registation}.html'), 200
         else:
             status_code=460
@@ -61,9 +61,10 @@ def register_customer():
     except:
         return render_template(f'{page_customer_registration}.html'), status_code
 
-#---WIP---
 @app.route(f'/{page_customer_search}', methods = ['GET'])
 def search_customer():
+    if request.method == 'GET':
+        return render_template(f'{page_customer_search}.html', search_results=[]), 200
     status_code = 200
     search_param = request.args.get('procura')
     if search_param:
@@ -75,7 +76,7 @@ def search_customer():
                 status_code = 200
                 try:
                     for cliente in busca_clientes:
-                        search_results.append(cliente.send())
+                        search_results.append(cliente.enviar())
                 except:
                     status_code = 552
             else:
@@ -88,11 +89,41 @@ def search_customer():
         return render_template(f'{page_customer_search}.html', search_results=[]), 200
 
 
-#---NOT IMPLEMENTED---
-@app.route(f'/{page_vehicle_registation}', methods=['GET','POST'])
-def vehicleregistration():
-    return render_template(f'{page_vehicle_registation}.html', 501)
+#---WIP---
+@app.route(f'/cliente/<id_cliente>/{page_vehicle_registation}', methods=['GET','POST'])
+def vehicle_registration(id_cliente):
+    if request.method == 'GET':
+        return render_template(f'{page_vehicle_registation}.html', 200)
+    status_code = 200
+    try:
+        status_code = 561
+        cliente_atual = c.Cliente(id_cliente=id_cliente)
+        status_code = 460
+        placa = request.form['placa']
+        chassi = request.form['chassi']
+        marca = request.form['marca']
+        modelo = request.form['modelo']
+        ano_fabricacao = request.form['ano_fabricacao']
+        ano_modelo = request.form['ano_modelo']
+        cor = request.form['cor']
+        status_code=550
+        if placa and chassi:
+            veiculo_encontrado = f.pesquisar_veiculo(placa,chassi)
+            if (len(veiculo_encontrado)>0):
+                status_code=450
+                raise
+            else:
+                status_code=551
+                novo_veiculo = c.Veiculo(id_cliente = cliente_atual.id_cliente, placa = placa, chassi = chassi, marca = marca, modelo = modelo, ano_fabricacao = ano_fabricacao, ano_modelo = ano_modelo, cor = cor)
+                novo_veiculo.salvar()
+                return render_template(f'{page_vehicle_registation}.html', 200)
+        else:
+            status_code = 460
+            raise
+    except:
+        return render_template(f'{page_vehicle_registation}.html', status_code)
 
+#---NOT IMPLEMENTED---
 @app.route('/order', methods=['GET','POST'])
 def placeorder():
     return render_template('order.html', 501)
