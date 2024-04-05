@@ -147,10 +147,6 @@ class Cliente(Rscar):
         info['email'] = self.email
         return info
 
-<<<<<<< Updated upstream
-# novo_cliente = Cliente(id_cliente ='0', cpf ='123', cnpj ='456', nome ='aaaa', razao_social ='bbbb', endereco ='MeuLogradouro;;000;;MeuComplmento;;MinhaCidade;;SP;;01001-000', telefone ='0000', email = 'aaa@aaa.com')
-# print (novo_cliente.send())
-=======
 class Veiculo(Rscar):
     #id_veiculo, id_cliente, placa, chassi, marca, modelo, ano_fabricacao, ano_modelo, cor
     def __init__ (self, id_veiculo:str = '', id_cliente:str = '', placa:str = '', chassi:str = '', marca:str = '', modelo:str = '', ano_fabricacao:str = '', ano_modelo:str = '', cor:str = ''):
@@ -280,4 +276,3 @@ class Veiculo(Rscar):
         info['ano_modelo'] = self.ano_modelo
         info['cor'] = self.cor
         return info
->>>>>>> Stashed changes

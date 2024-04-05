@@ -56,7 +56,7 @@ def pesquisar_cliente_geral(parametro):
         resultado = cursor.fetchall()
         cursor.close()
         if len(resultado)>0:
-            return incluir_resultados(resultado)
+            return criar_lista_cliente(resultado)
             #search_results.append({'clientname':row[3], 'cpf':row[1], 'cnpj':row[2], 'email1':row[7], 'cellphone':row[6]})
         else:
             return []
