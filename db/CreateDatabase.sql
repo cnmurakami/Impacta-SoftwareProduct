@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `rscarautomotive` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `rscarautomotive`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: rscarautomotive
@@ -18,8 +20,6 @@
 --
 -- Table structure for table `cliente`
 --
-CREATE Database rscarautomotive;
-use rscarautomotive;
 
 DROP TABLE IF EXISTS `cliente`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -34,7 +34,7 @@ CREATE TABLE `cliente` (
   `telefone` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   PRIMARY KEY (`id_cliente`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,6 +43,7 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
+INSERT INTO `cliente` VALUES (3,'84964598888','','Ellen dos Santos','',', , ,  - AC, CEP 04425-000','/11990203123','ellen.xavier123@gmail.com'),(4,'84964598888','','Ellen','',', , ,  - AC, CEP 04425-000','/11990203123','ellen.xavier123@gmail.com'),(5,'84964598888','','Ellen dos Santos','',', , ,  - AC, CEP 04425-000','/11990203123','ellen.xavier123@gmail.com');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -298,6 +299,74 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `selecionar_cliente` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `selecionar_cliente`(
+    IN p_nome VARCHAR(100),
+	IN p_razao_social VARCHAR(100),
+	IN p_email VARCHAR(100),
+	IN p_telefone VARCHAR(20),
+    IN p_cpf VARCHAR(14),
+    IN p_cnpj VARCHAR(18)
+)
+BEGIN
+	DECLARE cliente_encontrado INT;
+		SELECT id_cliente INTO cliente_encontrado FROM cliente WHERE nome = p_nome;
+        SELECT id_cliente INTO cliente_encontrado FROM cliente WHERE razao_social = p_razao_social;
+		SELECT id_cliente INTO cliente_encontrado FROM cliente WHERE email = p_email;
+		SELECT id_cliente INTO cliente_encontrado FROM cliente WHERE telefone = p_telefone;
+		SELECT id_cliente INTO cliente_encontrado FROM cliente WHERE cpf = p_cpf;
+		SELECT id_cliente INTO cliente_encontrado FROM cliente WHERE cnpj = p_cnpj;
+        
+		IF cliente_encontrado IS NOT NULL THEN
+		SELECT * FROM cliente WHERE id_cliente = cliente_encontrado;
+        ELSE 
+			SELECT 'Cliente não cadastrado na base' AS messagem;
+        END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `selecionar_veiculo` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `selecionar_veiculo`(
+    IN p_placa VARCHAR(10),
+    IN id_cliente int
+)
+BEGIN
+	DECLARE veiculo_encontrado INT;
+		SELECT COUNT(*) INTO veiculo_encontrado FROM veiculo WHERE placa = p_placa;
+        SELECT COUNT(*) INTO veiculo_encontrado FROM veiculo WHERE id_cliente = p_cliente_encontrado;
+        
+        IF veiculo_encontrado >=1 THEN
+			SELECT * FROM veiculo WHERE id_cliente = p_cliente_encontrado AND placa = p_placa_veiculo;
+        ELSE 
+			SELECT 'Veículo não encontrado para o cliente especificado ou placa inválida' AS mensagem;
+        END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -308,4 +377,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-12 20:14:01
+-- Dump completed on 2024-04-09 18:34:29
