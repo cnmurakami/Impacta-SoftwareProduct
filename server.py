@@ -88,6 +88,15 @@ def search_customer():
     else:
         return render_template(f'{page_customer_search}.html', search_results=[]), 200
 
+@app.route(f'/cliente/<id_cliente>', methods = ['GET'])
+def exibir_cliente(id_cliente):
+    status_code = 561
+    try:
+        cliente_atual = c.Cliente(id_cliente=id_cliente)
+        informacoes = cliente_atual.enviar()
+        return render_template('cliente.html', dados=informacoes), 200
+    except:
+        return render_template('cliente.html'), status_code
 
 #---WIP---
 @app.route(f'/cliente/<id_cliente>/{page_vehicle_registation}', methods=['GET','POST'])
