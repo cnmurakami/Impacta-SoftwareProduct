@@ -40,7 +40,7 @@ class Cliente(Rscar):
                 self.telefone = resultado[0][6]
                 self.email = resultado[0][7]
             else:
-                raise
+                raise Exception
         else:
             self.id_cliente = id_cliente
             self.cpf = cpf
@@ -133,7 +133,7 @@ class Cliente(Rscar):
             conn.commit()
         except:
             print ('ERRO NO INSERT')
-            return Exception
+            raise Exception
     
     def enviar(self):
         info = {}
@@ -150,11 +150,11 @@ class Cliente(Rscar):
 class Veiculo(Rscar):
     #id_veiculo, id_cliente, placa, chassi, marca, modelo, ano_fabricacao, ano_modelo, cor
     def __init__ (self, id_veiculo:str = '', id_cliente:str = '', placa:str = '', chassi:str = '', marca:str = '', modelo:str = '', ano_fabricacao:str = '', ano_modelo:str = '', cor:str = ''):
-        #lista completa: id_cliente, cpf, cnpj, nome, razao_social, endereco, telefone, email
+        #lista completa: id_veiculo, id_cliente, cpf, cnpj, nome, razao_social, endereco, telefone, email
         if id_veiculo != '':
             conn = mysql.connection
             cursor = conn.cursor()
-            cursor.execute('select * from cliente where id_cliente = %s', (id_cliente))
+            cursor.execute('select * from veiculo where id_veiculo = %s', (id_veiculo))
             resultado = cursor.fetchall()
             cursor.close()
             if len(resultado) == 1:
@@ -170,7 +170,7 @@ class Veiculo(Rscar):
             else:
                 raise
         else:
-            self.id_veiculo = id_veiculo
+            self.id_veiculo = ''
             self.id_cliente = id_cliente
             self.placa = placa
             self.chassi = chassi
@@ -182,76 +182,85 @@ class Veiculo(Rscar):
 
     @property
     def id_veiculo(self):
-        return self.id_veiculo
+        return self._id_veiculo
 
     @id_veiculo.setter
     def id_veiculo(self, novo_id_veiculo):
-        self.id_veiculo = novo_id_veiculo
+        self._id_veiculo = novo_id_veiculo
     
+
     @property
     def id_cliente(self):
-        return self.id_cliente
+        return self._id_cliente
 
     @id_cliente.setter
     def id_cliente(self, novo_id_cliente):
-        self.id_cliente = novo_id_cliente
+        self._id_cliente = novo_id_cliente
     
+
     @property
     def placa(self):
-        return self.placa
+        return self._placa
 
     @placa.setter
     def placa(self, novo_placa):
-        self.placa = novo_placa
+        self._placa = novo_placa
     
+
     @property
     def chassi(self):
-        return self.chassi
+        return self._chassi
 
     @chassi.setter
     def chassi(self, novo_chassi):
-        self.chassi = novo_chassi
+        self._chassi = novo_chassi
     
+
     @property
     def marca(self):
-        return self.marca
+        return self._marca
 
     @marca.setter
     def marca(self, novo_marca):
-        self.marca = novo_marca
+        self._marca = novo_marca
     
+
     @property
     def modelo(self):
-        return self.modelo
+        return self._modelo
 
     @modelo.setter
     def modelo(self, novo_modelo):
-        self.modelo = novo_modelo
+        self._modelo = novo_modelo
     
+
     @property
     def ano_fabricacao(self):
-        return self.ano_fabricacao
+        return self._ano_fabricacao
 
     @ano_fabricacao.setter
     def ano_fabricacao(self, novo_ano_fabricacao):
-        self.ano_fabricacao = novo_ano_fabricacao
+        self._ano_fabricacao = novo_ano_fabricacao
     
+
     @property
     def ano_modelo(self):
-        return self.ano_modelo
+        return self._ano_modelo
 
     @ano_modelo.setter
     def ano_modelo(self, novo_ano_modelo):
-        self.ano_modelo = novo_ano_modelo
+        self._ano_modelo = novo_ano_modelo
     
+
     @property
     def cor(self):
-        return self.cor
+        return self._cor
 
     @cor.setter
     def cor(self, novo_cor):
-        self.cor = novo_cor
+        self._cor = novo_cor
 
+    
     def salvar(self):
         try:
             conn = mysql.connection
@@ -262,7 +271,7 @@ class Veiculo(Rscar):
             conn.commit()
         except:
             print ('ERRO NO INSERT')
-            return Exception
+            raise Exception
     
     def enviar(self):
         info = {}

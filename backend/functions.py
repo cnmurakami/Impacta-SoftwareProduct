@@ -40,7 +40,7 @@ def criar_lista_veiculo(resultado):
 def pesquisar_veiculo(placa,chassi):
     conn = mysql.connection
     cursor = conn.cursor()
-    cursor.execute('select * from cliente where placa = %s or chassi = %s', (placa, chassi))
+    cursor.execute('select * from veiculo where placa = %s or chassi = %s', (placa, chassi))
     resultado = cursor.fetchall()
     cursor.close()
     if len(resultado)>0:
