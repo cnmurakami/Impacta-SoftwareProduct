@@ -61,10 +61,8 @@ def register_customer():
     except:
         return render_template(f'{page_customer_registration}.html'), status_code
 
-@app.route(f'/{page_customer_search}/', methods = ['GET'])
+@app.route(f'/{page_customer_search}/', methods = ['GET','POST'])
 def search_customer():
-    if request.method == 'GET':
-        return render_template(f'{page_customer_search}.html', search_results=[]), 200
     status_code = 200
     search_param = request.args.get('procura')
     if search_param:
