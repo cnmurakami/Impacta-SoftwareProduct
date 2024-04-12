@@ -17,7 +17,7 @@ mysql = MySQL(app)
 def criar_lista_cliente(resultado):
     lista_clientes = []
     for i in resultado:
-        lista_clientes.append(c.Cliente(i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7]))
+        lista_clientes.append(c.Cliente(id_cliente=i[0]))
     return lista_clientes
 
 def pesquisar_cliente(cpf='', cnpj=''):
@@ -40,7 +40,7 @@ def criar_lista_veiculo(resultado):
 def pesquisar_veiculo(placa,chassi):
     conn = mysql.connection
     cursor = conn.cursor()
-    cursor.execute('select * from cliente where placa = %s or chassi = %s', (placa, chassi))
+    cursor.execute('select * from veiculo where placa = %s or chassi = %s', (placa, chassi))
     resultado = cursor.fetchall()
     cursor.close()
     if len(resultado)>0:

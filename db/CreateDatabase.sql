@@ -290,7 +290,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `inserir_veiculo`(
 )
 BEGIN
     INSERT INTO veiculo (id_cliente, placa, chassi, marca, modelo, ano_fabricacao, ano_modelo, cor) 
-    VALUES ( p_id_cliente, p_placa, p_chassi, p_marca, p_modelo, p_ano_fabricacao, p_modelo, p_cor);
+    VALUES ( p_id_cliente, p_placa, p_chassi, p_marca, p_modelo, p_ano_fabricacao, p_ano_modelo, p_cor);
     
     SELECT 'Veículo inserido com sucesso!' AS message;
 END ;;

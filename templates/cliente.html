@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<header>
+    Cliente
+</header>
+<body>
+    {{cliente}}
+    <p></p>
+    <p></p>
+    <a href="{{ url_for('vehicle_registration', id_cliente = cliente['id_cliente'] ) }}">Registrar Veículo</a>
+</body>

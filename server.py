@@ -22,7 +22,7 @@ mysql = MySQL(app)
 def home():
     return render_template(f'{page_index}.html')
 
-@app.route(f'/{page_customer_registration}', methods=['GET','POST'])
+@app.route(f'/{page_customer_registration}/', methods=['GET','POST'])
 def register_customer():
     status_code=599
     if request.method == 'GET':
@@ -61,10 +61,8 @@ def register_customer():
     except:
         return render_template(f'{page_customer_registration}.html'), status_code
 
-@app.route(f'/{page_customer_search}', methods = ['GET'])
+@app.route(f'/{page_customer_search}/', methods = ['GET','POST'])
 def search_customer():
-    if request.method == 'GET':
-        return render_template(f'{page_customer_search}.html', search_results=[]), 200
     status_code = 200
     search_param = request.args.get('procura')
     if search_param:
@@ -88,25 +86,30 @@ def search_customer():
     else:
         return render_template(f'{page_customer_search}.html', search_results=[]), 200
 
-@app.route(f'/cliente/<id_cliente>', methods = ['GET'])
+@app.route(f'/cliente/<id_cliente>/', methods = ['GET'])
 def exibir_cliente(id_cliente):
     status_code = 561
     try:
         cliente_atual = c.Cliente(id_cliente=id_cliente)
-        informacoes = cliente_atual.enviar()
-        return render_template('cliente.html', dados=informacoes), 200
+        return render_template('cliente.html', cliente=cliente_atual.enviar()), 200
     except:
-        return render_template('cliente.html'), status_code
+        return render_template('cliente.html', cliente = {}), status_code
 
 #---WIP---
-@app.route(f'/cliente/<id_cliente>/{page_vehicle_registation}', methods=['GET','POST'])
+@app.route(f'/cliente/<id_cliente>/{page_vehicle_registation}/', methods=['GET','POST'])
 def vehicle_registration(id_cliente):
+    try:
+        status_code = 200
+        cliente_atual = c.Cliente(id_cliente=id_cliente)
+        cliente = cliente_atual.enviar()
+    except:
+        status_code = 561
+        cliente = {}
     if request.method == 'GET':
-        return render_template (f'{page_vehicle_registation}.html'), 200
+        return render_template (f'{page_vehicle_registation}.html', cliente = cliente), status_code
     status_code = 200
     try:
         status_code = 561
-        cliente_atual = c.Cliente(id_cliente=id_cliente)
         status_code = 460
         placa = request.form['placa']
         chassi = request.form['chassi']
@@ -125,15 +128,15 @@ def vehicle_registration(id_cliente):
                 status_code=551
                 novo_veiculo = c.Veiculo(id_cliente = cliente_atual.id_cliente, placa = placa, chassi = chassi, marca = marca, modelo = modelo, ano_fabricacao = ano_fabricacao, ano_modelo = ano_modelo, cor = cor)
                 novo_veiculo.salvar()
-                return render_template(f'{page_vehicle_registation}.html'), 200
+                return render_template(f'{page_vehicle_registation}.html', cliente = cliente), 200
         else:
             status_code = 460
             raise
     except:
-        return render_template(f'{page_vehicle_registation}.html'), status_code
+        return render_template(f'{page_vehicle_registation}.html',cliente = cliente), status_code
 
 #---NOT IMPLEMENTED---
-@app.route('/order', methods=['GET','POST'])
+@app.route('/order/', methods=['GET','POST'])
 def placeorder():
     return render_template('order.html', 501)
 
