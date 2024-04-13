@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 import requests
 from flask_mysqldb import MySQL
 from backend import db_classes as c
@@ -16,6 +16,7 @@ app.config['MYSQL_USER'] = db.user
 app.config['MYSQL_PASSWORD'] = db.password
 app.config['MYSQL_DB'] = db.db
 app.config['MYSQL_HOST'] = db.host
+app.config['CONSUME_RESULTS'] = True
 mysql = MySQL(app)
 
 @app.route('/', methods=['GET'])
@@ -54,7 +55,11 @@ def register_customer():
                 status_code=551
                 novo_cliente = c.Cliente(cpf=cpf, cnpj=cnpj, nome=client_name, razao_social = razao_social, endereco=endereco, telefone=telefone, email=email1)
                 novo_cliente.salvar()
-            return render_template(f'{page_vehicle_registation}.html'), 200
+                try:
+                    cliente_confirmado = f.pesquisar_cliente(cpf,cnpj)[0]
+                    return redirect(url_for('exibir_cliente', id_cliente = cliente_confirmado.id_cliente))
+                except:
+                    return render_template(f'{page_customer_registration}.html'), 552
         else:
             status_code=460
             raise

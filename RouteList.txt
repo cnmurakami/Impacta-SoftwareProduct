@@ -1,0 +1,14 @@
+@app.route('/', methods=['GET'])
+def home():
+
+@app.route(f'/register/', methods=['GET','POST'])
+def register_customer():
+
+@app.route(f'/search/', methods = ['GET','POST'])
+def search_customer():
+
+@app.route(f'/cliente/<id_cliente>/', methods = ['GET'])
+def exibir_cliente(id_cliente):
+
+@app.route(f'/cliente/<id_cliente>/vehicle_registration/', methods=['GET','POST'])
+def vehicle_registration(id_cliente):
