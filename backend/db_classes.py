@@ -27,7 +27,7 @@ class Cliente(Rscar):
         if id_cliente != '':
             conn = mysql.connection
             cursor = conn.cursor()
-            cursor.execute('select * from cliente where id_cliente = %s', (id_cliente))
+            cursor.execute('select * from cliente where id_cliente = %s', (id_cliente,))
             resultado = cursor.fetchall()
             cursor.close()
             if len(resultado) == 1:

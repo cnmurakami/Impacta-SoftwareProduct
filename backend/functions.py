@@ -17,7 +17,7 @@ mysql = MySQL(app)
 def criar_lista_cliente(resultado):
     lista_clientes = []
     for i in resultado:
-        lista_clientes.append(c.Cliente(id_cliente=i[0]))
+        lista_clientes.append(c.Cliente(id_cliente=str(i[0])))
     return lista_clientes
 
 def pesquisar_cliente(cpf='', cnpj=''):
