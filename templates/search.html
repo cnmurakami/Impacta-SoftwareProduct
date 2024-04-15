@@ -18,8 +18,8 @@
   <header>
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
       <div class="container-fluid">
-        <a action="/templates/home.html" class="navbar-brand" href="/home"
-          >Oficina</a
+        <a class="navbar-brand" href="/"
+          >RS Car Automotive</a
         >
         <button
           class="navbar-toggler"
@@ -35,152 +35,180 @@
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a
-                
-                class="nav-link active"
-                aria-current="page"
-                href="/"
-                >Home</a
-              >
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a
-    
-                class="nav-link"
-                href="/register"
-                >Register</a
-              >
+              <a class="nav-link" href="/register">Cadastro</a>
             </li>
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="/order"
-                >Order</a
-              >
+              <a class="nav-link" href="/order">Pedido</a>
             </li>
             <li class="nav-item">
-                <a
-          
-                class="nav-link"
-                aria-disabled="true"
-                href="/search"
-                >Search</a
-              >
+              <a class="nav-link" aria-disabled="true" href="/status">Status</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-disabled="true" href="/search">Busca</a>
             </li>
           </ul>
-          <form class="d-flex" role="search">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button class="btn btn-outline-success" type="submit"></button>
-          </form>
+          <a class="nav-link" href="/">Logout</a>
         </div>
       </div>
     </nav>
   </header>
-  
+
   <body>
-
-
     <div class="container">
-        <form action="/searchdatabase" method="GET">
-            <div class="mb-3">
-                <h1>Search Database</h1>
-                <label for="CPF" class="form-label">Search by Nome, E-mail, Phone, CPF, CNPJ:</label>
-                <input type="text" class="form-control" id="procura" name="procura" />
-                <div id="emailHelp" class="form-text"></div>
-            </div>
-            <button type="submit" class="btn btn-primary">Search</button>
-            <a href="/search" class="btn btn-secondary">Clear Search</a>
-        </form>
-      </div>
-  
-      <br />
-
-
-      <div class="container-result">
-        <div class="table-container">
-          <h2>Search Result</h2>
-          <table class="table table-dark table-striped" id="table">
-            {% if search_results %}
-            <thead>
-              <tr>
-                {% for column in search_results[0] %}
-                <th scope="col">{{ column }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody class="table-striped">
-              {% for result in search_results %}
-              <tr>
-                {% for column in result.values() %}
-                <td>{{ column }}</td>
-                {% endfor %}
-              </tr>
-              {% endfor %}
-            </tbody>
-            {% else %}
-            <tr>
-              <td colspan="100%">No records found for the provided criteria.</td>
-            </tr>
-            {% endif %}
-          </table>
+      <form action="/searchdatabase" method="GET">
+        <div class="mb-3">
+          <h1>Buscar Informacões</h1>
+          <label for="CPF" class="form-label"
+            >Pesquisar por Nome, E-mail, Celular , CPF, CNPJ:</label
+          >
+          <input type="text" class="form-control" id="procura" name="procura" />
+          <div id="emailHelp" class="form-text"></div>
         </div>
-      </div>
-
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-        </li>
-    </ul>
-</nav>
-
-        
-    
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+        <a href="/search" class="btn btn-secondary">Limpar</a>
+      </form>
     </div>
-    
+
+    <br />
+
+    <div class="container-result">
+  <div class="table-container">
+    <h2>Search Result</h2>
+    <table class="table table-striped table-hover" id="table">
+      {% if search_results %}
+      <thead>
+        <tr>
+          <!-- Add radio button column -->
+          <th scope="col">Select</th>
+          {% for column in search_results[0] %}
+          <th scope="col">{{ column }}</th>
+          {% endfor %}
+          <!-- Add view button column -->
+          <th scope="col">View</th>
+        </tr>
+      </thead>
+      <tbody class="table-striped">
+        {% for result in search_results %}
+        <tr>
+          <!-- Add radio button -->
+          <td class="col-auto">
+            <input type="radio" name="selected_record" value="{{ result.id }}" />
+          </td>
+          {% for column in result.values() %}
+          <td>{{ column }}</td>
+          {% endfor %}
+          <!-- Add view button -->
+          <td>
+            <button type="button" class="btn btn-primary view-button" onclick="openModal('{{ result.id }}')">
+              View
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      {% else %}
+      <tr>
+        <td colspan="100%">No records found for the provided criteria.</td>
+      </tr>
+      {% endif %}
+    </table>
   </div>
-  
-  
-  
-      <script src="{{ url_for('static', filename='script.js') }}"></script>
-      
-    
-  
-      <script
-      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.2/dist/bootstrap-table.min.js"></script>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="exampleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalhes do Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <fieldset class="client-field">
+          <legend>Campo Cliente</legend>
+          <input type="text" id="client_id"></input>
+          <input type="text" id="clientName" name="clientName" placeholder="Type the client Name" required />
+          <input type="text" id="cpf" name="CPF" class="cpf" placeholder="Digite o CPF" />
+          <input type="text" id="RazaoSocial" name="RazaoSocial" placeholder="Razao Social" />
+          <input type="text" id="cnpj" name="CNPJ" placeholder="CNPJ" placeholder="CNPJ" />
+          <input type="text" id="Telephone" name="Telephone" placeholder="Telefone">
+          <input type="text" id="Cellphone" name="Cellphone" placeholder="Celular" required />
+          <input type="email" id="Email1" name="Email1" placeholder="Digite um e-mail" required />
+          <input type="email" id="Email2" name="Email2" placeholder="Digite um e-mail" />
+        </fieldset>
+
+        <fieldset class="client-field">
+          <legend>Endereco do Cliente</legend>
 
 
+          <input type="text" id="CEP" name="CEP" placeholder="Digite o CEP" required />
+          <input type="text" id="Logradouro" name="Logradouro" placeholder="Logadouro" />
+          <input type="text" id="Numero" name="Numero" placeholder="Número" />
+          <input type="text" id="Complemento" name="Complemento" placeholder="Complemento" />
+          <select id="brazilianStates" name="brazilianStates">
+            <option value="AC">Acre</option>
+            <option value="AL">Alagoas</option>
+            <option value="AP">Amapá</option>
+            <option value="AM">Amazonas</option>
+            <option value="BA">Bahia</option>
+            <option value="CE">Ceará</option>
+            <option value="DF">Distrito Federal</option>
+            <option value="ES">Espírito Santo</option>
+            <option value="GO">Goiás</option>
+            <option value="MA">Maranhão</option>
+            <option value="MT">Mato Grosso</option>
+            <option value="MS">Mato Grosso do Sul</option>
+            <option value="MG">Minas Gerais</option>
+            <option value="PA">Pará</option>
+            <option value="PB">Paraíba</option>
+            <option value="PR">Paraná</option>
+            <option value="PE">Pernambuco</option>
+            <option value="PI">Piauí</option>
+            <option value="RJ">Rio de Janeiro</option>
+            <option value="RN">Rio Grande do Norte</option>
+            <option value="RS">Rio Grande do Sul</option>
+            <option value="RO">Rondônia</option>
+            <option value="RR">Roraima</option>
+            <option value="SC">Santa Catarina</option>
+            <option value="SP">São Paulo</option>
+            <option value="SE">Sergipe</option>
+            <option value="TO">Tocantins</option>
+          </select>
+          <input type="text" id="city" name="city" placeholder="Cidade" />
+        </fieldset>
 
-    <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/tableExport.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.2/dist/extensions/export/bootstrap-table-export.min.js"></script>
-    <script src="static/script.js"></script>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger">Deletar</button>
+        <button type="button" class="btn btn-warning">Editar</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ url_for('vehicle_registration') }}'">
+
+          Adicionar Veículo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/static/script.js"></script>
+    <!-- Your existing JavaScript code -->
   </body>
   <!-- <footer>
     <div class="container-footer">
@@ -193,7 +221,7 @@
       <div class="quick-links">
         <h4>Quick Links:</h4>
         <ul>
-          <li><a href="/services">Services</a></li>
+          <li><a hrefx="/services">Services</a></li>
           <li><a href="/about">About Us</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
@@ -207,7 +235,7 @@
           <li>
             <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
           </li>
-          <!-- Add more social media icons as needed --><!--
+          <!Add more social media icons as needed --><!--
         </ul>
       </div>
     </div>
