@@ -1,6 +1,6 @@
 import psycopg2
-from flask import Flask, request, render_template, jsonify, session
-import requests
+from flask import Flask, request, render_template, jsonify, session, flash
+
 
 
 app = Flask(__name__)
@@ -32,43 +32,94 @@ def search_page():
 
 @app.route('/order', methods=['GET'])
 def order_page():
-    return render_template('order.html')
+    return render_template('show_ordem.html')
 
 @app.route('/vehicle_registration')
 def register_vehicle_page():
     return render_template('vehicle_registration.html')
+
+@app.route('/status', methods=['GET'])
+def status_page():
+    return render_template('status.html')
+
+@app.route('/show_ordem', methods=['GET'])
+def show_ordem_page():
+    return render_template('show_ordem.html')
 
 
 @app.route('/register', methods=['POST'])
 def register():
     try:
         if request.method == 'POST':
+            # Retrieve form data
             clientName = request.form['clientName']
             CPF = request.form['CPF']
             RazaoSocial = request.form['RazaoSocial']
             CNPJ = request.form['CNPJ']
-            Telephone = request.form['Telephone']
             Cellphone = request.form['Cellphone']
             Email1 = request.form['Email1']
-            Email2 = request.form['Email2']
-            CEP = request.form['CEP']
+            CEP = request.form['CEP'][:8] 
             Logradouro = request.form['Logradouro']
             Numero = request.form['Numero']
             Complemento = request.form['Complemento']
             brazilianStates = request.form['brazilianStates']
             city = request.form['city']
-            if ((clientName and CPF) or (RazaoSocial and CNPJ)) and (Telephone or Cellphone) and (Email1 or Email2) and CEP:
+
+            app.logger.info(f"Form data received: {request.form}")
+
+            # Check if required fields are present
+            if ((clientName and CPF) or (RazaoSocial and CNPJ)) and Cellphone and Email1 and CEP:
+                # Insert data into the database
                 conn = get_db()
                 cursor = conn.cursor()
-                cursor.execute('INSERT INTO client (clientname, cpf, razaosocial, cnpj, telephone, cellphone, email1, email2, cep, logradouro, numero, complemento, brazilianstates, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Telephone, Cellphone, Email1, Email2, CEP, Logradouro, Numero, Complemento, brazilianStates, city))
+                cursor.execute('INSERT INTO client (clientname, cpf, razaosocial, cnpj, cellphone, email1, cep, logradouro, numero, complemento, brazilianstates, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Cellphone, Email1, CEP, Logradouro, Numero, Complemento, brazilianStates, city))
                 conn.commit()
                 cursor.close()
+                app.logger.info("Data inserted successfully")
                 return render_template('vehicle_registration.html')
+            else:
+                app.logger.error("One or more required fields are missing")
+                return render_template('register.html', error='One or more required fields are missing'), 400
     except Exception as e:
         # Log the error for debugging purposes
         app.logger.error(f"An error occurred: {str(e)}")
         return render_template('register.html'), 500
     return render_template('register.html')
+
+
+
+# Route to retrieve the last inserted client data
+@app.route('/get_last_client_data', methods=['GET'])
+def get_last_client_data():
+    last_client_data = get_last_client_data_from_database()
+    if last_client_data:
+        client_id, cpf, cnpj = last_client_data
+        return jsonify({'client_id': client_id, 'cpf': cpf, 'cnpj': cnpj}), 200
+    else:
+        return jsonify({'error': 'Failed to retrieve last client data'}), 404
+
+
+
+
+# Route to retrieve the last placa from the veiculo table
+@app.route('/get_last_veiculo_data', methods=['GET'])
+def get_last_veiculo_data():
+    last_placa = get_last_veiculo_data_from_database()
+    if last_placa:
+        return jsonify({'last_placa': last_placa}), 200
+    else:
+        return jsonify({'error': 'Failed to retrieve last placa'}), 404
+
+
+# # Route to fetch tiposervicos from the database
+# @app.route('/get_tiposervicos', methods=['GET'])
+# def get_tiposervicos():
+#     tiposervicos = fetch_tiposervicos_from_database()
+#     if tiposervicos:
+#         return jsonify({'tiposervicos': tiposervicos}), 200
+#     else:
+#         return jsonify({'error': 'Failed to retrieve tiposervicos'}), 404
+
 
 
 def get_last_client_data_from_database():
@@ -103,39 +154,23 @@ def get_last_veiculo_data_from_database():
     except psycopg2.Error as e:
         print("Error retrieving last veiculo data")
         return None # Return None if an error occurs
+    
+def get_tipo_servicos():
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
 
+        cursor.execute("SELECT * FROM tipo_servico ORDER BY id")
+        tiposervicos = cursor.fetchone()
 
-# Route to retrieve the last inserted client data
-@app.route('/get_last_client_data', methods=['GET'])
-def get_last_client_data():
-    last_client_data = get_last_client_data_from_database()
-    if last_client_data:
-        client_id, cpf, cnpj = last_client_data
-        return jsonify({'client_id': client_id, 'cpf': cpf, 'cnpj': cnpj}), 200
-    else:
-        return jsonify({'error': 'Failed to retrieve last client data'}), 404
+        cursor.close()
+        conn.close()
 
+        return tiposervicos
+    except psycopg2.Error as e:
+        print("Error retrieving tipo_servico data")
+        return None
 
-
-
-# Route to retrieve the last placa from the veiculo table
-@app.route('/get_last_veiculo_data', methods=['GET'])
-def get_last_veiculo_data():
-    last_placa = get_last_veiculo_data_from_database()
-    if last_placa:
-        return jsonify({'last_placa': last_placa}), 200
-    else:
-        return jsonify({'error': 'Failed to retrieve last placa'}), 404
-
-
-# # Route to fetch tiposervicos from the database
-# @app.route('/get_tiposervicos', methods=['GET'])
-# def get_tiposervicos():
-#     tiposervicos = fetch_tiposervicos_from_database()
-#     if tiposervicos:
-#         return jsonify({'tiposervicos': tiposervicos}), 200
-#     else:
-#         return jsonify({'error': 'Failed to retrieve tiposervicos'}), 404
 
 
 @app.route('/view/<int:selected_client_id>', methods=['GET'])
@@ -183,7 +218,7 @@ def view_client(selected_client_id):
     
 
 @app.route('/searchdatabase', methods=['GET'])
-def search():
+def search_database():
     if request.method == 'GET':
         search_param = request.args.get('procura')
         print("Search parameter:", search_param) 
@@ -297,20 +332,20 @@ def vehicle_registration():
 @app.route('/show_ordem', methods=['GET'])
 def show_ordem():
     # Get the last client ID
-    last_client_id_response = requests.get('http://localhost:5021/get_last_client_data')
+    last_client_id_response = request.get('http://localhost:5021/get_last_client_data')
     if last_client_id_response.status_code == 200:
         last_client_id = last_client_id_response.json()['client_id']
     else:
         last_client_id = None
 
     # Get the last placa
-    last_placa_response = requests.get('http://localhost:5021/get_last_veiculo_data')
+    last_placa_response = request.get('http://localhost:5021/get_last_veiculo_data')
     if last_placa_response.status_code == 200:
         last_placa = last_placa_response.json()['last_placa']
     else:
         last_placa = None
     
-    tiposervicos = get_tiposervicos()
+    tiposervicos = get_tipo_servicos()
 
 
     # Render the template with the data
