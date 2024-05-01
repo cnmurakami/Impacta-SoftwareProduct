@@ -10,6 +10,22 @@ h2 {
   text-align: center;
 }
 
+.container-seach {
+  display: flex; /* Use flexbox layout */
+  justify-content: center; /* Distribute space between items */
+}
+
+#left-search,
+#right-search {
+  flex: 0 0 auto; /* Don't allow flex items to grow or shrink */
+  width: calc(
+    50% - 20px
+  ); /* Set width to 50% of the container's width minus margin */
+  margin: 20px 5px; /* Add margin between divs */
+  vertical-align: top;
+  text-align: center; /* Reset text alignment to the default value */
+}
+
 .container {
   position: relative;
   max-width: 600px;
@@ -27,12 +43,6 @@ form {
   text-align: left;
 }
 
-fieldset.client-field {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 fieldset {
   border: 1px solid #ddd;
   padding: 10px;
@@ -40,20 +50,26 @@ fieldset {
   border-radius: 5px;
 }
 
+fieldset.client-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+fieldset.client-address {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#openModalButton {
+  float: right;
+}
+
 legend {
   width: 100%;
   margin-bottom: 10px;
   font-weight: bold;
-}
-
-.float-end {
-  background-color: #7b8a98;
-  padding: center;
-  width: 150px;
-  height: 50px;
-  float: right; /* Align the button to the right */
-  color: rgb(250, 250, 252);
-  border-radius: 7px;
 }
 
 .icon-container {
@@ -82,7 +98,16 @@ legend {
 
 input {
   display: inline-block;
-  width: 300px;
+  width: 255px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+#brazilianStates {
+  display: inline-block;
+  width: 255px;
   margin-bottom: 10px;
   margin-right: 10px;
   margin-top: 10px;
@@ -93,9 +118,13 @@ input {
 #cnpj,
 #Telephone,
 #Cellphone,
-#Email1,
-#Email2 {
-  width: 300px;
+#Email1 {
+  width: 250px;
+  margin-bottom: 10px;
+}
+
+#city {
+  width: 200px;
   margin-bottom: 10px;
 }
 
@@ -273,4 +302,98 @@ footer {
 #icon {
   max-width: 100px;
   max-height: 100px;
+}
+
+.container-draggable {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#left,
+#right,
+#last {
+  background-color: rgba(222, 229, 233, 0.4);
+  border-color: #0f0f10;
+  border-radius: 2px;
+  width: 300px;
+  min-height: 700px;
+  margin: 20px;
+  border: 2px #fff;
+  box-shadow: #0c0c0c;
+  margin-bottom: 300px;
+}
+
+.list {
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  height: 100px; /* Adjust height as needed */
+  margin: 30px;
+  background-color: #567189;
+  color: #fff;
+  cursor: grab;
+  border-radius: 5px;
+  text-align: center; /* Center text within each div */
+  border: px solid #364077; /* Optional: Add border for visual clarity */
+  padding: 10px; /* Optional: Add padding for spacing */
+}
+
+h4 {
+  color: #364077;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 5px;
+}
+
+.fieldset-ordens {
+  margin: 0; /* Remove default margins */
+  padding: 0; /* Remove default padding */
+  border: none; /* Remove default border */
+  border-color: #fff;
+  width: 100%; /* Ensure fieldset takes full width */
+  box-sizing: border-box;
+  width: 100%; /* Ensure fieldset takes full width */
+  box-sizing: border-box; /* Include padding and border in the width */
+}
+
+#fieldset-ordens p {
+  margin: 5px 0; /* Adjust margins between paragraphs */
+}
+
+#status-page-h1 {
+  text-align: center;
+  color: #364077;
+  font-weight: bold;
+  font-family: 'helvetica';
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.fieldset-ordens {
+  width: 100%; /* Ensure fieldset takes full width */
+  box-sizing: border-box; /* Include padding and border in the width */
+}
+
+.list p {
+  margin: 5px 0; /* Adjust margins between paragraphs */
+  word-wrap: break-word; /* Allow long words to break and wrap */
+}
+
+#tipo_servico {
+  display: inline-block;
+  width: 300px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  height: 30px;
+}
+
+.table-order-field {
+  text-align: center;
+  justify-content: center;
 }
