@@ -154,7 +154,7 @@ class Veiculo(Rscar):
         if id_veiculo != '':
             conn = mysql.connection
             cursor = conn.cursor()
-            cursor.execute('select * from veiculo where id_veiculo = %s', (id_veiculo))
+            cursor.execute('select * from veiculo where id_veiculo = %s', (id_veiculo,))
             resultado = cursor.fetchall()
             cursor.close()
             if len(resultado) == 1:

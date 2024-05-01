@@ -57,7 +57,20 @@ def pesquisar_cliente_geral(parametro):
         cursor.close()
         if len(resultado)>0:
             return criar_lista_cliente(resultado)
-            #search_results.append({'clientname':row[3], 'cpf':row[1], 'cnpj':row[2], 'email1':row[7], 'cellphone':row[6]})
+        else:
+            return []
+    except:
+        return Exception
+    
+def pesquisar_veiculo_geral(parametro):
+    try:
+        conn = mysql.connection
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM veiculo WHERE lower(id_veiculo) LIKE %s OR lower(placa) LIKE %s OR lower(chassi) LIKE %s OR id_cliente LIKE %s', (f"%{parametro.lower()}%", f"%{parametro.lower()}%", f"%{parametro.lower()}%", f"%{parametro.lower()}%"))
+        resultado = cursor.fetchall()
+        cursor.close()
+        if len(resultado)>0:
+            return criar_lista_veiculo(resultado)
         else:
             return []
     except:

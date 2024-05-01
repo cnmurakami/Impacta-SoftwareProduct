@@ -53,7 +53,7 @@ mysql -uroot -p
 
 ```terminal
 use rscarautomotive
-view tables
+show tables
 ```
 
 <!--
