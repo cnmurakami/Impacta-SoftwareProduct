@@ -24,7 +24,7 @@ def home():
     return render_template(f'{page_index}.html')
 
 @app.route(f'/{page_customer_registration}/', methods=['GET','POST'])
-def register_customer():
+def register():
     status_code=599
     if request.method == 'GET':
         return render_template(f'{page_customer_registration}.html')
@@ -33,10 +33,8 @@ def register_customer():
         cpf = request.form['CPF']
         razao_social = request.form['RazaoSocial']
         cnpj = request.form['CNPJ']
-        telephone = request.form['Telephone']
         celular = request.form['Cellphone']
         email1 = request.form['Email1']
-        email2 = request.form['Email2']
         cep = request.form['CEP']
         logradouro = request.form['Logradouro']
         numero = request.form['Numero']
@@ -45,7 +43,7 @@ def register_customer():
         cidade = request.form['city']
         telefone = celular
         endereco = f'{logradouro};;{numero};;{complemento};;{cidade};;{estado};;{cep}'
-        if ((client_name and cpf) or (razao_social and cnpj)) and (telefone or celular) and (email1 or email2) and cep:
+        if ((client_name and cpf) or (razao_social and cnpj)) and telefone and email1 and cep:
             status_code=550
             cliente_encontrado = f.pesquisar_cliente(cpf,cnpj)
             if (len(cliente_encontrado)>0):
@@ -57,7 +55,7 @@ def register_customer():
                 novo_cliente.salvar()
                 try:
                     cliente_confirmado = f.pesquisar_cliente(cpf,cnpj)[0]
-                    return redirect(url_for('exibir_cliente', id_cliente = cliente_confirmado.id_cliente))
+                    return render_template(f'{page_vehicle_registration}.html')
                 except:
                     return render_template(f'{page_customer_registration}.html'), 552
         else:
@@ -65,6 +63,10 @@ def register_customer():
             raise
     except:
         return render_template(f'{page_customer_registration}.html'), status_code
+
+@app.route(f'/get_last_client_data', methods = ['GET'])
+def get_last_client_data():
+    pass
 
 @app.route(f'/search/', methods = ['GET'])
 def search():

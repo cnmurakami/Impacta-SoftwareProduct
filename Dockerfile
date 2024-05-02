@@ -1,5 +1,5 @@
 FROM python:3.12.2
-EXPOSE 5000
+# EXPOSE 5000
 ENV DOCKED Yes
 RUN pip install flask
 RUN pip install requests
