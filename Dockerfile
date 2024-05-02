@@ -10,9 +10,9 @@ RUN mkdir templates
 RUN mkdir static
 RUN mkdir backend
 COPY server.py /app
-COPY backend/* /app/backend/
-COPY templates/*  /app/templates/
-COPY static/*  /app/static/
+COPY backend/ /app/backend/
+COPY templates/  /app/templates/
+COPY static/  /app/static/
 # RUN chmod -R a+rwx /app/static
 # RUN chmod -R a+rwx /app/templates
 # RUN chmod -R a+rwx /app/backend
