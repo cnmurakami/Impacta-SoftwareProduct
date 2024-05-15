@@ -93,45 +93,6 @@ def register():
     return render_template('register.html')
 
 
-# @app.route('/register', methods=['POST'])
-# def register():
-#     try:
-#         if request.method == 'POST':
-#             # Retrieve form data
-#             clientName = request.form['clientName']
-#             CPF = request.form['CPF']
-#             RazaoSocial = request.form['RazaoSocial']
-#             CNPJ = request.form['CNPJ']
-#             Cellphone = request.form['Cellphone']
-#             Email1 = request.form['Email1']
-#             CEP = request.form['CEP'][:8] 
-#             Logradouro = request.form['Logradouro']
-#             Numero = request.form['Numero']
-#             Complemento = request.form['Complemento']
-#             brazilianStates = request.form['brazilianStates']
-#             city = request.form['city']
-
-#             app.logger.info(f"Form data received: {request.form}")
-
-#             # Check if required fields are present
-#             if ((clientName and CPF) or (RazaoSocial and CNPJ)) and Cellphone and Email1 and CEP:
-#                 # Insert data into the database
-#                 conn = get_db()
-#                 cursor = conn.cursor()
-#                 cursor.execute('INSERT INTO client (clientname, cpf, razaosocial, cnpj, cellphone, email1, cep, logradouro, numero, complemento, brazilianstates, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Cellphone, Email1, CEP, Logradouro, Numero, Complemento, brazilianStates, city))
-#                 conn.commit()
-#                 cursor.close()
-#                 app.logger.info("Data inserted successfully")
-#                 return render_template('vehicle_registration.html')
-#             else:
-#                 app.logger.error("One or more required fields are missing")
-#                 return render_template('register.html', error='One or more required fields are missing'), 400
-#     except Exception as e:
-#         # Log the error for debugging purposes
-#         app.logger.error(f"An error occurred: {str(e)}")
-#         return render_template('register.html'), 500
-#     return render_template('register.html')
-
 
 
 @app.route('/get_last_client_data', methods=['GET'])
