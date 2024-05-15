@@ -10,6 +10,22 @@ h2 {
   text-align: center;
 }
 
+.container-seach {
+  display: flex; /* Use flexbox layout */
+  justify-content: center; /* Distribute space between items */
+}
+
+#left-search,
+#right-search {
+  flex: 0 0 auto; /* Don't allow flex items to grow or shrink */
+  width: calc(
+    50% - 20px
+  ); /* Set width to 50% of the container's width minus margin */
+  margin: 20px 5px; /* Add margin between divs */
+  vertical-align: top;
+  text-align: center; /* Reset text alignment to the default value */
+}
+
 .container {
   position: relative;
   max-width: 600px;
@@ -102,9 +118,14 @@ input {
 #cnpj,
 #Telephone,
 #Cellphone,
-#Email1 {
-  width: 250px;
+#Email1,
+#ano_fabricacao,
+#ano_modelo {
+  width: 255px;
+  height: 30px;
   margin-bottom: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 
 #city {
