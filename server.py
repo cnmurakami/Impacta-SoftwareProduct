@@ -1,21 +1,24 @@
-import psycopg2
-from flask import Flask, request, render_template, jsonify, session, flash
 
+from flask import Flask, request, render_template, jsonify, session, flash
+import pymysql
 
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Set a secret key for flashing messages
 
+
 def get_db():
-    # Connect to your PostgreSQL database
-    conn = psycopg2.connect(
-        dbname="car_automotive",
-        user="postgres",
-        password="Private@17",
-        host="localhost",
-        port=5433
+    # Connect to your MySQL database
+    conn = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='Unitario321',
+        database='rscarautomotive',
+        port=3306,
+        cursorclass=pymysql.cursors.DictCursor
     )
     return conn
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -42,9 +45,10 @@ def register_vehicle_page():
 def status_page():
     return render_template('status.html')
 
-@app.route('/show_ordem', methods=['GET'])
+@app.route('/ordem', methods=['GET'])
 def show_ordem_page():
-    return render_template('show_ordem.html')
+    return render_template('ordem.html')
+
 
 
 @app.route('/register', methods=['POST'])
@@ -65,6 +69,8 @@ def register():
             brazilianStates = request.form['brazilianStates']
             city = request.form['city']
 
+            endereco = Logradouro + Complemento + Numero + city + brazilianStates + CEP
+
             app.logger.info(f"Form data received: {request.form}")
 
             # Check if required fields are present
@@ -72,7 +78,7 @@ def register():
                 # Insert data into the database
                 conn = get_db()
                 cursor = conn.cursor()
-                cursor.execute('INSERT INTO client (clientname, cpf, razaosocial, cnpj, cellphone, email1, cep, logradouro, numero, complemento, brazilianstates, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Cellphone, Email1, CEP, Logradouro, Numero, Complemento, brazilianStates, city))
+                cursor.execute('INSERT INTO cliente (nome, cpf, razao_social, cnpj, telefone, email, endereco) VALUES (%s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Cellphone, Email1, endereco))
                 conn.commit()
                 cursor.close()
                 app.logger.info("Data inserted successfully")
@@ -87,17 +93,55 @@ def register():
     return render_template('register.html')
 
 
+# @app.route('/register', methods=['POST'])
+# def register():
+#     try:
+#         if request.method == 'POST':
+#             # Retrieve form data
+#             clientName = request.form['clientName']
+#             CPF = request.form['CPF']
+#             RazaoSocial = request.form['RazaoSocial']
+#             CNPJ = request.form['CNPJ']
+#             Cellphone = request.form['Cellphone']
+#             Email1 = request.form['Email1']
+#             CEP = request.form['CEP'][:8] 
+#             Logradouro = request.form['Logradouro']
+#             Numero = request.form['Numero']
+#             Complemento = request.form['Complemento']
+#             brazilianStates = request.form['brazilianStates']
+#             city = request.form['city']
 
-# Route to retrieve the last inserted client data
+#             app.logger.info(f"Form data received: {request.form}")
+
+#             # Check if required fields are present
+#             if ((clientName and CPF) or (RazaoSocial and CNPJ)) and Cellphone and Email1 and CEP:
+#                 # Insert data into the database
+#                 conn = get_db()
+#                 cursor = conn.cursor()
+#                 cursor.execute('INSERT INTO client (clientname, cpf, razaosocial, cnpj, cellphone, email1, cep, logradouro, numero, complemento, brazilianstates, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Cellphone, Email1, CEP, Logradouro, Numero, Complemento, brazilianStates, city))
+#                 conn.commit()
+#                 cursor.close()
+#                 app.logger.info("Data inserted successfully")
+#                 return render_template('vehicle_registration.html')
+#             else:
+#                 app.logger.error("One or more required fields are missing")
+#                 return render_template('register.html', error='One or more required fields are missing'), 400
+#     except Exception as e:
+#         # Log the error for debugging purposes
+#         app.logger.error(f"An error occurred: {str(e)}")
+#         return render_template('register.html'), 500
+#     return render_template('register.html')
+
+
+
 @app.route('/get_last_client_data', methods=['GET'])
 def get_last_client_data():
     last_client_data = get_last_client_data_from_database()
     if last_client_data:
-        client_id, cpf, cnpj = last_client_data
-        return jsonify({'client_id': client_id, 'cpf': cpf, 'cnpj': cnpj}), 200
+        # id_cliente, cpf, cnpj = last_client_data
+        return jsonify(last_client_data), 200
     else:
         return jsonify({'error': 'Failed to retrieve last client data'}), 404
-
 
 
 
@@ -121,21 +165,21 @@ def get_last_veiculo_data():
 #         return jsonify({'error': 'Failed to retrieve tiposervicos'}), 404
 
 
-
+@app.route('/get_last_client_data_from_database', methods=['GET'])
 def get_last_client_data_from_database():
     try:
         conn = get_db()
         cursor = conn.cursor()
 
         # Query to retrieve the last inserted client data
-        cursor.execute("SELECT id, cpf, cnpj FROM client ORDER BY id DESC LIMIT 1")
+        cursor.execute("SELECT id_cliente, cpf, cnpj FROM cliente ORDER BY id_cliente DESC LIMIT 1")
         last_client_data = cursor.fetchone()
 
         cursor.close()
         conn.close()
         
         return last_client_data
-    except psycopg2.Error as e:
+    except pymysql.Error as e:
         print("Error retrieving last client data:", e)
         return None  # Return None if an error occurs
     
@@ -180,7 +224,7 @@ def view_client(selected_client_id):
         cursor = conn.cursor()
 
         try:
-            query = "SELECT * FROM client WHERE id = %s"
+            query = "SELECT * FROM cliente WHERE id_cliente = %s"
             cursor.execute(query, (selected_client_id,))
             client_info = cursor.fetchone()
 
@@ -227,7 +271,7 @@ def search_database():
             cursor = conn.cursor()
 
             try:
-                query = "SELECT id, clientname, cpf, cnpj, email1, cellphone FROM client WHERE clientname ILIKE %s OR email1 ILIKE %s OR cellphone ILIKE %s OR cpf ILIKE %s OR cnpj ILIKE %s;"
+                query = "SELECT id_cliente, nome, cpf, cnpj, email, telefone FROM cliente WHERE nome ILIKE %s OR email ILIKE %s OR telefone ILIKE %s OR cpf ILIKE %s OR cnpj ILIKE %s;"
                 cursor.execute(query, (f"%{search_param}%", f"%{search_param}%", f"%{search_param}%", f"%{search_param}%", f"%{search_param}%"))
                 records = cursor.fetchall()
 
@@ -255,7 +299,7 @@ def search_client():
         conn = get_db()
         cursor = conn.cursor()
         
-        cursor.execute('SELECT id, clientname, cpf, cnpj FROM client WHERE cpf = %s OR cnpj = %s', (cpf_cnpj, cpf_cnpj))
+        cursor.execute('SELECT cliente_id, nome, cpf, cnpj FROM cliente WHERE cpf = %s OR cnpj = %s', (cpf_cnpj, cpf_cnpj))
         client_data = cursor.fetchone()
 
         if client_data:
@@ -295,22 +339,23 @@ def search_client():
 def vehicle_registration():
     if request.method == 'POST':
         # Process the form data
-        client_id = request.form.get('client_id')
+        id_cliente = request.form.get('id_cliente')
         placa = request.form.get('placa')
         cpf = request.form.get('cpf')
         cnpj = request.form.get('cnpj')
         chassi = request.form.get('chassi')
-        fabricante = request.form.get('fabricante')
+        marca = request.form.get('marca')
         modelo = request.form.get('modelo')
         cor = request.form.get('cor')
         ano_modelo = request.form.get('ano_modelo')
+        ano_fabricacao = request.form.get('ano_fabricacao')
 
-        if placa and (cpf or cnpj) and chassi and fabricante and cor and ano_modelo:
+        if placa and chassi and marca and cor and ano_modelo:
             # Insert the data into the database
             conn = get_db()
             cursor = conn.cursor()
-            cursor.execute('INSERT INTO veiculo (placa, cpf, cnpj, chassi, fabricante, modelo, cor, ano_modelo, client_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                                                (placa, cpf, cnpj, chassi, fabricante, modelo, cor, ano_modelo, client_id))
+            cursor.execute('INSERT INTO veiculo (placa, chassi, marca, modelo, cor, ano_modelo, id_cliente, ano_fabricacao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                                                (placa, chassi, marca, modelo, cor, ano_modelo, id_cliente, ano_fabricacao))
             conn.commit()
             cursor.close()
             return render_template('vehicle_registration.html', placa=placa)  # Redirect to a success page or another route
