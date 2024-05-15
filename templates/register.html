@@ -146,7 +146,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-warning">Editar</button>
-                    <button type="button" id="openRegistroVeiculo" class="btn btn-primary" onclick="openVehicleRegistration('{{ client_id }}')">
+                    <button type="button" id="openRegistroVeiculo" class="btn btn-primary" onclick="openVehicleRegistration('{{ id_cliente }}')">
                       Cadastrar Veículo
                   </button>
                 </div>
@@ -236,14 +236,14 @@ $(document).ready(function() {
             method: 'GET',
             success: function(response) {
                 // Extract the last client ID from the response
-                var lastClientId = response.client_id; // Corrected access here
+                var lastClientId = response.id_cliente; // Corrected access here
 
                 
                 // Set the value of the input field to the last client ID
                 $('#client_id_input').val(lastClientId);
                 
                 // Construct the URL with the last client ID
-                var url = '/vehicle_registration?client_id=' + lastClientId;
+                var url = '/vehicle_registration?id_cliente=' + lastClientId;
                 
                 // Navigate to the vehicle registration page with the last client ID
                 window.location.href = url;
