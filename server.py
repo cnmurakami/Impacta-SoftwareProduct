@@ -69,7 +69,7 @@ def register():
             brazilianStates = request.form['brazilianStates']
             city = request.form['city']
 
-            endereco = Logradouro + Complemento + Numero + city + brazilianStates + CEP
+            endereco = f"{Logradouro}, {Numero}, {Complemento}, {city}, {brazilianStates}, {CEP}"
 
             app.logger.info(f"Form data received: {request.form}")
 
@@ -91,6 +91,7 @@ def register():
         app.logger.error(f"An error occurred: {str(e)}")
         return render_template('register.html'), 500
     return render_template('register.html')
+
 
 
 
