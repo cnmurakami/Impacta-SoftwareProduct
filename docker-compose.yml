@@ -1,26 +1,20 @@
-version: "1"
+version: '3.8'
 
 services:
-
   app:
-    build: ./
-    links:
-      - db
+    build: .
     ports:
-      - "5000:5000"
+      - '5010:5010'
+    environment:
+      - DATABASE_URL=postgres://postgres:Private@17@db:5432/car_automotive
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
   db:
-    image: mysql:8.3
+    image: postgres:latest
     ports:
-      - "32000:3306"
+      - '5434:5432'
     environment:
-      MYSQL_ROOT_PASSWORD: Unitario123
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      POSTGRES_DB: car_automotive
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Private@17

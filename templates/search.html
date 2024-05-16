@@ -57,53 +57,22 @@
   </header>
 
   <body>
-    <div class="container-seach">
-
-
-      <div id="left-search" class="container">
-        <form action="/searchdatabase" method="GET">
-          <div class="mb-3">
-            <h1>Buscar Informacões</h1>
-            <label for="CPF" class="form-label"
-              >Pesquisar por Nome, E-mail, Celular , CPF, CNPJ:</label
-            >
-            <input type="text" class="form-control" id="procura" name="procura" />
-            <div id="emailHelp" class="form-text"></div>
-          </div>
-          <button type="submit" class="btn btn-primary">Pesquisar</button>
-          <a href="/search" class="btn btn-secondary">Limpar</a>
-        </form>
-      </div>
-  
-      <br />
-  
-      <div id="right-search" class="container">
-        <form action="/searchdatabaseveiculo" method="GET">
-          <div class="mb-3">
-            <h1>Buscar Informacões do Veículo</h1>
-            <label for="placa" class="form-label"
-              >Pesquisar por Id, Placa, Chassi, ID Cliente:</label
-            >
-            <input type="text" class="form-control" id="procura_veiculo" name="procura_veiculo" />
-            <div id="emailHelp" class="form-text"></div>
-          </div>
-          <button type="submit" class="btn btn-primary">Pesquisar</button>
-          <a href="/search" class="btn btn-secondary">Limpar</a>
-        </form>
-      </div>
-  
-      <br/>
-
-
-
-
-
-
-
-
+    <div class="container">
+      <form action="/searchdatabase" method="GET">
+        <div class="mb-3">
+          <h1>Buscar Informacões</h1>
+          <label for="CPF" class="form-label"
+            >Pesquisar por Nome, E-mail, Celular , CPF, CNPJ:</label
+          >
+          <input type="text" class="form-control" id="procura" name="procura" />
+          <div id="emailHelp" class="form-text"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+        <a href="/search" class="btn btn-secondary">Limpar</a>
+      </form>
     </div>
-    
 
+    <br />
 
     <div class="container-result">
   <div class="table-container">
@@ -119,7 +88,6 @@
           {% endfor %}
           <!-- Add view button column -->
           <th scope="col">View</th>
-          <th scope="col">Veiculo</th>
         </tr>
       </thead>
       <tbody class="table-striped">
@@ -138,11 +106,6 @@
               View
             </button>
           </td>
-          <td>
-            <button type="button" class="btn btn-primary view-button" onclick="openModalVeiculo('{{ result.id }}')">
-              Veiculo
-            </button>
-          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -156,7 +119,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal" id="exampleModalCliente" tabindex="-1">
+<div class="modal" id="exampleModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -218,34 +181,6 @@
           <input type="text" id="city" name="city" placeholder="Cidade" />
         </fieldset>
 
-        <fieldset class="client-field">
-
-          <legend>Detalhes Veículo</legend>
-
-          <!-- Pre-filled hidden input field for client_id -->
-          <input type="text" id="id" nome="id">
-          <input type="text" id="placa" name="placa" placeholder="Placa" required />
-          <input type="text" id="chassi" name="chassi" placeholder="Chassi">
-          <input type="text" id="fabricante" name="fabricante" placeholder="Fabricante" required />
-          <input type="text" id="modelo" name="modelo" placeholder="Modelo" required />
-          <input type="text" id="cor" name="cor" placeholder="Cor" />
-          <input type="text" id="ano_modelo" name="ano_modelo" placeholder="Ano do Modelo" />
-        
-         
-
-          <input type="texto" id="cor" name="cor" placeholder="Cor" required />
-          <select id="an0_modelo" name="ano_modelo">
-            <option value="1970">Selecionar o Ano</option>
-            <option value="1971">1971</option>
-            <option value="1972">1972</option>
-            <!-- Add more years as needed -->
-            <option value="2024">2024</option>
-          </select>
-
-
-
-        </fieldset>
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -261,11 +196,6 @@
 </div>
 
 
-
-
-
-
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -278,7 +208,39 @@
       crossorigin="anonymous"
     ></script>
     <script src="/static/script.js"></script>
-   
+    <!-- Your existing JavaScript code -->
   </body>
- 
+  <!-- <footer>
+    <div class="container-footer">
+      <div class="contact-info">
+        <h4>Contact Us:</h4>
+        <p>123 Workshop St, Cityville</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Email: info@workshop.com</p>
+      </div>
+      <div class="quick-links">
+        <h4>Quick Links:</h4>
+        <ul>
+          <li><a hrefx="/services">Services</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="social-media">
+        <h4>Follow Us:</h4>
+        <ul>
+          <li>
+            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+          </li>
+          <li>
+            <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+          </li>
+          <!Add more social media icons as needed --><!--
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2024 Workshop Name. All rights reserved.</p>
+    </div>
+  </footer> -->
 </html>

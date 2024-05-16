@@ -68,27 +68,53 @@ function openModal() {
   new bootstrap.Modal('#exampleModal').show();
 }
 
-function openModal(clientId) {
-  // Send AJAX request to fetch client information
-  fetch(`/view_client/${clientId}`)
+function openModal(searchParameter) {
+  // Send AJAX request to fetch client and veiculo information
+  fetch(`/view_data/${searchParameter}`)
     .then((response) => response.json())
     .then((data) => {
+      if (data.error) {
+        console.error('Error:', data.error);
+        return;
+      }
+
       // Populate form fields with client information
-      document.getElementById('client_id').value = data.client_id;
-      document.getElementById('clientName').value = data.clientName;
-      document.getElementById('cpf').value = data.cpf;
-      document.getElementById('RazaoSocial').value = data.RazaoSocial;
-      document.getElementById('cnpj').value = data.cnpj;
-      document.getElementById('Telephone').value = data.Telephone;
-      document.getElementById('Cellphone').value = data.Cellphone;
-      document.getElementById('Email1').value = data.Email1;
-      document.getElementById('Email2').value = data.Email2;
-      document.getElementById('CEP').value = data.CEP;
-      document.getElementById('Logradouro').value = data.Logradouro;
-      document.getElementById('Numero').value = data.Numero;
-      document.getElementById('Complemento').value = data.Complemento;
-      document.getElementById('brazilianStates').value = data.brazilianStates;
-      document.getElementById('city').value = data.city;
+      if (data.clientData) {
+        const clientData = data.clientData;
+        document.getElementById('id_cliente').value = clientData.client_id;
+        document.getElementById('clientName').value = clientData.clientName;
+        document.getElementById('cpf').value = clientData.cpf;
+        document.getElementById('RazaoSocial').value = clientData.RazaoSocial;
+        document.getElementById('cnpj').value = clientData.cnpj;
+        document.getElementById('Telephone').value = clientData.Telephone;
+        document.getElementById('Cellphone').value = clientData.Cellphone;
+        document.getElementById('Email1').value = clientData.Email1;
+        document.getElementById('Email2').value = clientData.Email2;
+        document.getElementById('CEP').value = clientData.CEP;
+        document.getElementById('Logradouro').value = clientData.Logradouro;
+        document.getElementById('Numero').value = clientData.Numero;
+        document.getElementById('Complemento').value = clientData.Complemento;
+        document.getElementById('brazilianStates').value =
+          clientData.brazilianStates;
+        document.getElementById('city').value = clientData.city;
+      }
+
+      // Populate form fields with veiculo information
+      if (data.veiculoData) {
+        const veiculoDataList = data.veiculoData;
+        // Assuming there is only one veiculo for simplicity, otherwise, iterate over the list
+        const veiculoData = veiculoDataList[0];
+        document.getElementById('veiculo_id').value = veiculoData.id;
+        document.getElementById('placa').value = veiculoData.placa;
+        document.getElementById('cpf').value = veiculoData.cpf;
+        document.getElementById('cnpj').value = veiculoData.cnpj;
+        document.getElementById('chassi').value = veiculoData.chassi;
+        document.getElementById('fabricante').value = veiculoData.fabricante;
+        document.getElementById('modelo').value = veiculoData.modelo;
+        document.getElementById('cor').value = veiculoData.cor;
+        document.getElementById('ano_modelo').value = veiculoData.ano_modelo;
+        document.getElementById('id_cliente').value = veiculoData.client_id;
+      }
 
       // Show the modal
       const modal = new bootstrap.Modal(
@@ -99,31 +125,62 @@ function openModal(clientId) {
     .catch((error) => console.error('Error:', error));
 }
 
-function openModalVeiculo(veiculoId) {
-  // Send AJAX request to fetch client information
-  fetch(`/view_veiculo/${veiculoId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      // Populate form fields with client information
-      document.getElementById('id').value = data.id;
-      document.getElementById('placa').value = data.placa;
-      document.getElementById('cpf').value = data.cpf;
-      document.getElementById('cnpj').value = data.cnpj;
-      document.getElementById('chassi').value = data.chassi;
-      document.getElementById('fabricante').value = data.fabricante;
-      document.getElementById('modelo').value = data.modelo;
-      document.getElementById('cor').value = data.cor;
-      document.getElementById('ano_modelo').value = data.ano_modelo;
-      document.getElementById('client_id').value = data.client_id;
+// function openModal(clientId) {
+//   // Send AJAX request to fetch client information
+//   fetch(`/view_client/${clientId}`)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // Populate form fields with client information
+//       document.getElementById('client_id').value = data.client_id;
+//       document.getElementById('clientName').value = data.clientName;
+//       document.getElementById('cpf').value = data.cpf;
+//       document.getElementById('RazaoSocial').value = data.RazaoSocial;
+//       document.getElementById('cnpj').value = data.cnpj;
+//       document.getElementById('Telephone').value = data.Telephone;
+//       document.getElementById('Cellphone').value = data.Cellphone;
+//       document.getElementById('Email1').value = data.Email1;
+//       document.getElementById('Email2').value = data.Email2;
+//       document.getElementById('CEP').value = data.CEP;
+//       document.getElementById('Logradouro').value = data.Logradouro;
+//       document.getElementById('Numero').value = data.Numero;
+//       document.getElementById('Complemento').value = data.Complemento;
+//       document.getElementById('brazilianStates').value = data.brazilianStates;
+//       document.getElementById('city').value = data.city;
 
-      // Show the modal
-      const modal = new bootstrap.Modal(
-        document.getElementById('exampleModalCliente')
-      );
-      modal.show();
-    })
-    .catch((error) => console.error('Error:', error));
-}
+//       // Show the modal
+//       const modal = new bootstrap.Modal(
+//         document.getElementById('exampleModalCliente')
+//       );
+//       modal.show();
+//     })
+//     .catch((error) => console.error('Error:', error));
+// }
+
+// function openModalVeiculo(veiculoId) {
+//   // Send AJAX request to fetch client information
+//   fetch(`/view_veiculo/${veiculoId}`)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // Populate form fields with client information
+//       document.getElementById('id').value = data.id;
+//       document.getElementById('placa').value = data.placa;
+//       document.getElementById('cpf').value = data.cpf;
+//       document.getElementById('cnpj').value = data.cnpj;
+//       document.getElementById('chassi').value = data.chassi;
+//       document.getElementById('fabricante').value = data.fabricante;
+//       document.getElementById('modelo').value = data.modelo;
+//       document.getElementById('cor').value = data.cor;
+//       document.getElementById('ano_modelo').value = data.ano_modelo;
+//       document.getElementById('client_id').value = data.client_id;
+
+//       // Show the modal
+//       const modal = new bootstrap.Modal(
+//         document.getElementById('exampleModalCliente')
+//       );
+//       modal.show();
+//     })
+//     .catch((error) => console.error('Error:', error));
+// }
 
 function openModal1() {
   console.log('openModal1 function called');
@@ -172,7 +229,7 @@ function cadastrarVeiculo() {
   var formData = $('#clientVehicleForm').serialize();
 
   // Add the client_id to the formData
-  formData += '&client_id=' + client_id;
+  formData += '&id_cliente=' + client_id;
 
   // Perform an AJAX request to register the vehicle
   $.ajax({
@@ -199,10 +256,10 @@ $(document).ready(function () {
 $(document).ready(function () {
   // When the page is loaded
   var urlParams = new URLSearchParams(window.location.search);
-  var clientId = urlParams.get('client_id');
+  var clientId = urlParams.get('id_cliente');
 
   // Set the value of the input field to the client ID
-  $('#client_id').val(clientId);
+  $('#id_cliente').val(clientId);
 });
 
 $(document).ready(function () {
