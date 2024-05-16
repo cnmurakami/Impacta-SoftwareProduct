@@ -34,17 +34,38 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">Home</a>
+             <li class="nav-item">
+              <a
+                
+                class="nav-link active"
+                aria-current="page"
+                href="/"
+                >Home</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/register">Register</a>
+              <a
+    
+                class="nav-link"
+                href="/register"
+                >Register</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/order">Order</a>
+              <a
+                class="nav-link"
+                href="/order"
+                >Order</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-disabled="true" href="/search">Search</a>
+                <a
+          
+                class="nav-link"
+                aria-disabled="true"
+                href="/search"
+                >Search</a
+              >
             </li>
           </ul>
           <form class="d-flex" role="search">
@@ -60,93 +81,177 @@
       </div>
     </nav>
   </header>
-  <style>
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .order-details {
-      display: flex;
-      margin-top: 20px;
-    }
-
-    .left-column,
-    .middle-column {
-      flex: 1;
-      margin-right: 20px;
-    }
-
-    .services {
-      margin-top: 20px;
-    }
-
-    .service-options {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .service {
-      margin-right: 10px;
-      margin-bottom: 10px;
-      padding: 5px 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    .total {
-      margin-top: 20px;
-    }
-
-    .save-button {
-      text-align: right;
-    }
-  </style>
   <body>
     <div class="container">
-      <div class="header">
-        <h1>Ordem de Serviço</h1>
-        <div class="print-button">
-          <button onclick="window.print()">Imprimir</button>
-        </div>
-      </div>
-      <fieldset>
-        <div class="order-details">
-          <div class="left-column">
-            <label for="order-id">Ordem ID:</label>
-            <input type="text" id="order-id" readonly class="form-control" />
-            <label for="cnpj-cpf">CNPJ/CPF:</label>
-            <input type="text" id="cnpj-cpf" readonly class="form-control" />
-          </div>
-          <div class="middle-column">
-            <label for="number-plate">Placa:</label>
-            <input type="text" id="number-plate" class="form-control" />
-          </div>
-        </div>
-      </fieldset>
+      <h2>Mechanical Workshop System</h2>
 
-      <div class="services">
-        <fieldset>
-          <legend>Lista de Serviços</legend>
-          <div class="service-options">
-            <!-- Service options will be populated dynamically -->
+      <!-- Client Search Form -->
+      <form id="clientSearchForm">
+        <label for="cpfCnpj">Enter CPF or CNPJ:</label>
+        <input type="text" id="cpfCnpj" name="cpfCnpj" required />
+        <button type="button" onclick="searchClient()">Search</button>
+      </form>
+
+      <!-- Display Client and Vehicle Info -->
+      <div id="clientInfo" style="display: none">
+        <h3>Client Information:</h3>
+        <p><strong>Name:</strong> <span id="clientName"></span></p>
+        <p><strong>CPF/CNPJ:</strong> <span id="clientCpfCnpj"></span></p>
+
+        <h3>Vehicles:</h3>
+        <select id="vehicleSelect" onchange="loadServices()">
+          <!-- Vehicle options will be populated dynamically -->
+        </select>
+
+        <!-- Mechanical Services Form -->
+        <form id="servicesForm">
+          <h3>Mechanical Services:</h3>
+          <!-- Populate the mechanical services dynamically -->
+          <select id="mechanicalServices" multiple>
+            <option value="oilChange">Oil Change</option>
+            <option value="brakeService">Brake Service</option>
+            <!-- Add more services as needed -->
+          </select>
+
+          <h3>Service Prices:</h3>
+          <div id="servicePrices">
+            <!-- Prices will be displayed dynamically -->
           </div>
-        </fieldset>
-        <div class="total">
-          <p>Total: R$<span id="total">0</span></p>
-        </div>
-        <div class="save-button">
-          <button class="btn btn-primary">Salvar Ordem</button>
-        </div>
+
+          <button type="button" onclick="printAndShare()">
+            Print and Share
+          </button>
+        </form>
       </div>
     </div>
+
+    <script>
+      // Function to simulate searching for a client
+      function searchClient() {
+        // Fetch client and vehicle information based on the entered CPF/CNPJ
+        // (Replace this with your actual backend logic)
+
+        // Example data
+        const clientData = {
+          name: 'Ellen',
+          cpfCnpj: '123.456.789-00',
+          vehicles: [
+            { numberPlate: 'ABC123', services: ['oilChange', 'brakeService'] },
+            { numberPlate: 'XYZ789', services: ['tireRotation'] },
+            // Add more vehicles as needed
+          ],
+        };
+
+        // Display the retrieved information
+        displayClientInfo(clientData);
+      }
+
+      // Function to display client and vehicle information
+      function displayClientInfo(clientData) {
+        const clientInfo = document.getElementById('clientInfo');
+        const clientNameSpan = document.getElementById('clientName');
+        const clientCpfCnpjSpan = document.getElementById('clientCpfCnpj');
+        const vehicleSelect = document.getElementById('vehicleSelect');
+
+        clientNameSpan.textContent = clientData.name;
+        clientCpfCnpjSpan.textContent = clientData.cpfCnpj;
+
+        // Populate the vehicle dropdown
+        clientData.vehicles.forEach((vehicle) => {
+          const option = document.createElement('option');
+          option.value = vehicle.numberPlate;
+          option.textContent = vehicle.numberPlate;
+          vehicleSelect.appendChild(option);
+        });
+
+        // Show the client info section
+        clientInfo.style.display = 'block';
+      }
+
+      // Function to load mechanical services based on the selected vehicle
+      function loadServices() {
+        const vehicleSelect = document.getElementById('vehicleSelect');
+        const selectedVehicleNumberPlate = vehicleSelect.value;
+
+        // Fetch service prices for the selected vehicle
+        // (Replace this with your actual backend logic)
+
+        // Example data
+        const servicePricesData = {
+          oilChange: 50,
+          brakeService: 80,
+          tireRotation: 30,
+          // Add more services as needed
+        };
+
+        // Display service prices
+        displayServicePrices(servicePricesData);
+      }
+
+      // Function to display service prices
+      function displayServicePrices(servicePricesData) {
+        const servicesSelect = document.getElementById('mechanicalServices');
+        const servicePricesDiv = document.getElementById('servicePrices');
+
+        // Clear previous prices
+        servicePricesDiv.innerHTML = '';
+
+        // Display prices for selected services
+        Array.from(servicesSelect.selectedOptions).forEach((option) => {
+          const serviceName = option.value;
+          const price = servicePricesData[serviceName];
+
+          const priceParagraph = document.createElement('p');
+          priceParagraph.textContent = `${serviceName}: $${price}`;
+          servicePricesDiv.appendChild(priceParagraph);
+        });
+      }
+
+      // Function to simulate printing and sharing
+      function printAndShare() {
+        // You can implement actual print and share functionality here
+        alert('Printing and Sharing...');
+      }
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
   </body>
+  <th>
+    <footer>
+      <div class="container-footer">
+        <div class="contact-info">
+          <h4>Contact Us:</h4>
+          <p>123 Workshop St, Cityville</p>
+          <p>Phone: (123) 456-7890</p>
+          <p>Email: info@workshop.com</p>
+        </div>
+        <div class="quick-links">
+          <h4>Quick Links:</h4>
+          <ul>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="social-media">
+          <h4>Follow Us:</h4>
+          <ul>
+            <li>
+              <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+            </li>
+            <li>
+              <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+            </li>
+            <!-- Add more social media icons as needed -->
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2024 Workshop Name. All rights reserved.</p>
+      </div>
+    </footer>
+  </th>
 </html>

@@ -1,0 +1,3 @@
+#Ignorarar arquivos cache do python
+__pycache__
+backend/db_config.py

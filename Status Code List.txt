@@ -1,0 +1,10 @@
+Client:
+450: Cadastro já existe
+460: Informações incompletas
+
+Server:
+550: Erro ao conectar-se ao db
+551: Erro ao salvar informações no db
+552: Erro ao recuperar informações no db
+561: Informação não localizada
+599: Erro desconhecido de servidor

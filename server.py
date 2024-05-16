@@ -1,401 +1,182 @@
+from flask import Flask, render_template, request, url_for, redirect, jsonify, json
+import requests
+from flask_mysqldb import MySQL
+from backend import db_classes as c
+from backend import db_config as db
+from backend import functions as f
 
-from flask import Flask, request, render_template, jsonify, session, flash
-import pymysql
-
+#global variables
+page_index = 'home'
+page_customer_registration = 'register'
+page_customer_search = 'search'
+page_vehicle_registration = 'vehicle_registration'
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Set a secret key for flashing messages
-
-
-def get_db():
-    # Connect to your MySQL database
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='Unitario321',
-        database='rscarautomotive',
-        port=3306,
-        cursorclass=pymysql.cursors.DictCursor
-    )
-    return conn
-
+app.config['MYSQL_USER'] = db.user
+app.config['MYSQL_PASSWORD'] = db.password
+app.config['MYSQL_DB'] = db.db
+app.config['MYSQL_HOST'] = db.host
+app.config['CONSUME_RESULTS'] = True
+mysql = MySQL(app)
 
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('home.html')
+    return render_template(f'{page_index}.html')
 
-
-@app.route('/register', methods=['GET'])
-def register_page():
-    return render_template('register.html')
-
-@app.route('/search')
-def search_page():
-    return render_template('search.html')
-
-@app.route('/order', methods=['GET'])
-def order_page():
-    return render_template('show_ordem.html')
-
-@app.route('/vehicle_registration')
-def register_vehicle_page():
-    return render_template('vehicle_registration.html')
-
-@app.route('/status', methods=['GET'])
-def status_page():
-    return render_template('status.html')
-
-@app.route('/ordem', methods=['GET'])
-def show_ordem_page():
-    return render_template('ordem.html')
-
-
-
-@app.route('/register', methods=['POST'])
+@app.route(f'/{page_customer_registration}/', methods=['GET','POST'])
 def register():
+    status_code=599
+    if request.method == 'GET':
+        return render_template(f'{page_customer_registration}.html')
     try:
-        if request.method == 'POST':
-            # Retrieve form data
-            clientName = request.form['clientName']
-            CPF = request.form['CPF']
-            RazaoSocial = request.form['RazaoSocial']
-            CNPJ = request.form['CNPJ']
-            Cellphone = request.form['Cellphone']
-            Email1 = request.form['Email1']
-            CEP = request.form['CEP'][:8] 
-            Logradouro = request.form['Logradouro']
-            Numero = request.form['Numero']
-            Complemento = request.form['Complemento']
-            brazilianStates = request.form['brazilianStates']
-            city = request.form['city']
-
-            endereco = f"{Logradouro}, {Numero}, {Complemento}, {city}, {brazilianStates}, {CEP}"
-
-            app.logger.info(f"Form data received: {request.form}")
-
-            # Check if required fields are present
-            if ((clientName and CPF) or (RazaoSocial and CNPJ)) and Cellphone and Email1 and CEP:
-                # Insert data into the database
-                conn = get_db()
-                cursor = conn.cursor()
-                cursor.execute('INSERT INTO cliente (nome, cpf, razao_social, cnpj, telefone, email, endereco) VALUES (%s, %s, %s, %s, %s, %s, %s)', (clientName, CPF, RazaoSocial, CNPJ, Cellphone, Email1, endereco))
-                conn.commit()
-                cursor.close()
-                app.logger.info("Data inserted successfully")
-                return render_template('vehicle_registration.html')
+        client_name = request.form['clientName']
+        cpf = request.form['CPF']
+        razao_social = request.form['RazaoSocial']
+        cnpj = request.form['CNPJ']
+        celular = request.form['Cellphone']
+        email1 = request.form['Email1']
+        cep = request.form['CEP']
+        logradouro = request.form['Logradouro']
+        numero = request.form['Numero']
+        complemento = request.form['Complemento']
+        estado = request.form['brazilianStates']
+        cidade = request.form['city']
+        telefone = celular
+        endereco = f'{logradouro};;{numero};;{complemento};;{cidade};;{estado};;{cep}'
+        if ((client_name and cpf) or (razao_social and cnpj)) and telefone and email1 and cep:
+            status_code=550
+            cliente_encontrado = f.pesquisar_cliente(cpf,cnpj)
+            if (len(cliente_encontrado)>0):
+                status_code=450
+                raise
             else:
-                app.logger.error("One or more required fields are missing")
-                return render_template('register.html', error='One or more required fields are missing'), 400
-    except Exception as e:
-        # Log the error for debugging purposes
-        app.logger.error(f"An error occurred: {str(e)}")
-        return render_template('register.html'), 500
-    return render_template('register.html')
+                status_code=551
+                novo_cliente = c.Cliente(cpf=cpf, cnpj=cnpj, nome=client_name, razao_social = razao_social, endereco=endereco, telefone=telefone, email=email1)
+                novo_cliente.salvar()
+                try:
+                    cliente_confirmado = f.pesquisar_cliente(cpf,cnpj)[0]
+                    return render_template(f'{page_vehicle_registration}.html')
+                except:
+                    return render_template(f'{page_customer_registration}.html'), 552
+        else:
+            status_code=460
+            raise
+    except:
+        return render_template(f'{page_customer_registration}.html'), status_code
 
-
-
-
-
-@app.route('/get_last_client_data', methods=['GET'])
+@app.route(f'/get_last_client_data', methods = ['GET'])
 def get_last_client_data():
-    last_client_data = get_last_client_data_from_database()
-    if last_client_data:
-        # id_cliente, cpf, cnpj = last_client_data
-        return jsonify(last_client_data), 200
-    else:
-        return jsonify({'error': 'Failed to retrieve last client data'}), 404
+    pass
 
-
-
-# Route to retrieve the last placa from the veiculo table
-@app.route('/get_last_veiculo_data', methods=['GET'])
-def get_last_veiculo_data():
-    last_placa = get_last_veiculo_data_from_database()
-    if last_placa:
-        return jsonify({'last_placa': last_placa}), 200
-    else:
-        return jsonify({'error': 'Failed to retrieve last placa'}), 404
-
-
-# # Route to fetch tiposervicos from the database
-# @app.route('/get_tiposervicos', methods=['GET'])
-# def get_tiposervicos():
-#     tiposervicos = fetch_tiposervicos_from_database()
-#     if tiposervicos:
-#         return jsonify({'tiposervicos': tiposervicos}), 200
-#     else:
-#         return jsonify({'error': 'Failed to retrieve tiposervicos'}), 404
-
-
-@app.route('/get_last_client_data_from_database', methods=['GET'])
-def get_last_client_data_from_database():
-    try:
-        conn = get_db()
-        cursor = conn.cursor()
-
-        # Query to retrieve the last inserted client data
-        cursor.execute("SELECT id_cliente, cpf, cnpj FROM cliente ORDER BY id_cliente DESC LIMIT 1")
-        last_client_data = cursor.fetchone()
-
-        cursor.close()
-        conn.close()
-        
-        return last_client_data
-    except pymysql.Error as e:
-        print("Error retrieving last client data:", e)
-        return None  # Return None if an error occurs
-    
-def get_last_veiculo_data_from_database():
-    try:
-        conn = get_db()
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT placa FROM veiculo ORDER BY id DESC LIMIT 1")
-        last_veiculo_data = cursor.fetchone()
-
-        cursor.close()
-        conn.close()
-
-        return last_veiculo_data
-    except psycopg2.Error as e:
-        print("Error retrieving last veiculo data")
-        return None # Return None if an error occurs
-    
-def get_tipo_servicos():
-    try:
-        conn = get_db()
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM tipo_servico ORDER BY id")
-        tiposervicos = cursor.fetchone()
-
-        cursor.close()
-        conn.close()
-
-        return tiposervicos
-    except psycopg2.Error as e:
-        print("Error retrieving tipo_servico data")
-        return None
-
-
-
-@app.route('/view/<int:selected_client_id>', methods=['GET'])
-def view_client(selected_client_id):
-    if selected_client_id:
-        conn = get_db()  
-        cursor = conn.cursor()
-
-        try:
-            query = "SELECT * FROM cliente WHERE id_cliente = %s"
-            cursor.execute(query, (selected_client_id,))
-            client_info = cursor.fetchone()
-
-            if client_info:
-                client_dict = {
-                    'client_id': client_info[0],
-                    'clientName': client_info[1],
-                    'cpf': client_info[2],
-                    'RazaoSocial': client_info[3],
-                    'cnpj': client_info[4],
-                    'Telephone': client_info[5],
-                    'Cellphone': client_info[6],
-                    'Email1': client_info[7],
-                    'Email2': client_info[8],
-                    'CEP': client_info[9],
-                    'Logradouro': client_info[10],
-                    'Numero': client_info[11],
-                    'Complemento': client_info[12],
-                    'brazilianStates': client_info[13],
-                    'city': client_info[14]
-                }
-                return jsonify(client_dict)
-            else:
-                return jsonify({'error': 'Client not found'})
-
-        except psycopg2.Error as e:
-            print("Error fetching client information:", e)
-            return jsonify({'error': 'Database error'})
-
-        finally:
-            cursor.close()
-            conn.close()
-    else:
-        return jsonify({'error': 'No client selected'})
-    
-
-@app.route('/searchdatabase', methods=['GET'])
-def search_database():
-    if request.method == 'GET':
-        search_param = request.args.get('procura')
-        print("Search parameter:", search_param) 
-        if search_param:
-            conn = get_db()
-            cursor = conn.cursor()
-
-            try:
-                query = "SELECT id_cliente, nome, cpf, cnpj, email, telefone FROM cliente WHERE nome ILIKE %s OR email ILIKE %s OR telefone ILIKE %s OR cpf ILIKE %s OR cnpj ILIKE %s;"
-                cursor.execute(query, (f"%{search_param}%", f"%{search_param}%", f"%{search_param}%", f"%{search_param}%", f"%{search_param}%"))
-                records = cursor.fetchall()
-
-                if records:
-                    search_results = [dict(zip([column.name for column in cursor.description], row)) for row in records]
-                else:
-                    search_results = []
-            except psycopg2.Error as e:
-                print("Error fetching records:", e)
-                search_results = []
-            finally:
-                cursor.close()
-                conn.close()
-
-            print("Search results:", search_results) 
-            return render_template('search.html', search_results=search_results)
-        else:
-            return render_template('search.html', search_results=[])
-
-
-@app.route('/search_client', methods=['POST'])
-def search_client():
-    if request.method == 'POST':
-        cpf_cnpj = request.form.get('cpfCnpj')
-        conn = get_db()
-        cursor = conn.cursor()
-        
-        cursor.execute('SELECT cliente_id, nome, cpf, cnpj FROM cliente WHERE cpf = %s OR cnpj = %s', (cpf_cnpj, cpf_cnpj))
-        client_data = cursor.fetchone()
-
-        if client_data:
-            client_id, clientname, cpf, cnpj = client_data
-            client_info = {
-                'client_id': client_id,
-                'clientname': clientname,
-                'cpfCnpj': cpf if cpf else cnpj,
-                'veiculos': []
-            }
-
-            cursor.execute('SELECT id, placa FROM veiculo WHERE client_id = %s', (client_id,))
-            veiculos = cursor.fetchall()
-
-            for veiculo_id, placa in veiculos:
-                veiculo_info = {'id': veiculo_id, 'placa': placa, 'servicos': []}
-                cursor.execute('SELECT nome FROM tipo_de_servico WHERE id_veiculo = %s', (veiculo_id,))
-                servicos = cursor.fetchall()
-                for servico in servicos:
-                    veiculo_info['servicos'].append(servico[0])
-                
-                # Append veiculo_info to client_info
-                client_info['veiculos'].append(veiculo_info)
-
-            cursor.close()
-            conn.close()
-
-            return jsonify(client_info)
-        else:
-            cursor.close()
-            conn.close()
-            return jsonify({'error': 'Cliente não encontrado'}), 404
-
-
-
-@app.route('/vehicle_registration', methods=['POST'])
-def vehicle_registration():
-    if request.method == 'POST':
-        # Process the form data
-        id_cliente = request.form.get('id_cliente')
-        placa = request.form.get('placa')
-        cpf = request.form.get('cpf')
-        cnpj = request.form.get('cnpj')
-        chassi = request.form.get('chassi')
-        marca = request.form.get('marca')
-        modelo = request.form.get('modelo')
-        cor = request.form.get('cor')
-        ano_modelo = request.form.get('ano_modelo')
-        ano_fabricacao = request.form.get('ano_fabricacao')
-
-        if placa and chassi and marca and cor and ano_modelo:
-            # Insert the data into the database
-            conn = get_db()
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO veiculo (placa, chassi, marca, modelo, cor, ano_modelo, id_cliente, ano_fabricacao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
-                                                (placa, chassi, marca, modelo, cor, ano_modelo, id_cliente, ano_fabricacao))
-            conn.commit()
-            cursor.close()
-            return render_template('vehicle_registration.html', placa=placa)  # Redirect to a success page or another route
-        else:
-            flash('Try Again.', 'error')
-            return render_template('vehicle_registration.html', placa=request.args.get('placa'))
-    else:
-        # If it's a GET request, render the vehicle registration page
-        placa = request.args.get('placa')
-        
-
-        # Store client_id, cpf, and cnpj in session
-        session['placa'] = placa
-       
-
-        return render_template('vehicle_registration.html', placa=placa)
-
-
-@app.route('/show_ordem', methods=['GET'])
-def show_ordem():
-    # Get the last client ID
-    last_client_id_response = request.get('http://localhost:5021/get_last_client_data')
-    if last_client_id_response.status_code == 200:
-        last_client_id = last_client_id_response.json()['client_id']
-    else:
-        last_client_id = None
-
-    # Get the last placa
-    last_placa_response = request.get('http://localhost:5021/get_last_veiculo_data')
-    if last_placa_response.status_code == 200:
-        last_placa = last_placa_response.json()['last_placa']
-    else:
-        last_placa = None
-    
-    tiposervicos = get_tipo_servicos()
-
-
-    # Render the template with the data
-    return render_template('show_ordem.html', last_client_id=last_client_id, last_placa=last_placa, tiposervicos=tiposervicos)
-
-
-
-@app.route('/searchdatabase', methods=['GET'])
+@app.route(f'/search/', methods = ['GET'])
 def search():
-    if request.method == 'GET':
-        search_param = request.args.get('procura')
-        print("Search parameter:", search_param)  # Debug print
-        if search_param:
-            # Connect to the database
-            conn = get_db()
-            cursor = conn.cursor()
+    return render_template(f'{page_customer_search}.html', search_results=[]), 200
 
+@app.route(f'/searchdatabase/', methods = ['GET'])
+def search_customer():
+    try:
+        pesquisa_cliente = request.args.get('procura')
+        if pesquisa_cliente:
+            search_results = []
             try:
-                # Use ILIKE for case-insensitive search
-                query = "SELECT * FROM client WHERE clientname ILIKE %s OR email1 ILIKE %s OR cellphone ILIKE %s OR cpf ILIKE %s OR cnpj ILIKE %s;"
-                cursor.execute(query, (f"%{search_param}%", f"%{search_param}%", f"%{search_param}%", f"%{search_param}%", f"%{search_param}%"))
-                records = cursor.fetchall()
-
-                if records:
-                    # Convert records to list of dictionaries
-                    search_results = [dict(zip([column.name for column in cursor.description], row)) for row in records]
+                status_code = 550
+                busca_clientes = f.pesquisar_cliente_geral(pesquisa_cliente)
+                if len(busca_clientes)>0:
+                    status_code = 200
+                    try:
+                        for cliente in busca_clientes:
+                            search_results.append(cliente.enviar())
+                    except:
+                        status_code = 552
                 else:
-                    search_results = []
-            except psycopg2.Error as e:
-                print("Error fetching records:", e)
-                search_results = []
-            finally:
-                cursor.close()
-                conn.close()
+                    status_code = 561
+            except:
+                return render_template(f'{page_customer_search}.html'), status_code
 
-            print("Search results:", search_results)  # Debug print
-            return render_template('search.html', search_results=search_results)
-        else:
-            # If no search parameter provided, render empty search page
-            return render_template('search.html', search_results=[])
+            return render_template(f'{page_customer_search}.html', search_results=search_results), status_code
+    except:
+        return redirect(f'{page_customer_search}.html'), 460
 
+@app.route(f'/searchdatabaseveiculo/', methods = ['GET'])
+def search_vehicle():
+    try:
+        pesquisa_veiculo = request.args.get('procura_veiculo')
+        if pesquisa_veiculo:
+            search_results = []
+            try:
+                status_code = 550
+                busca_veiculos = f.pesquisar_veiculo_geral(pesquisa_veiculo)
+                if len(busca_veiculos)>0:
+                    status_code = 200
+                    try:
+                        for veiculo in busca_veiculos:
+                            search_results.append(veiculo.enviar())
+                    except:
+                        status_code = 552
+                else:
+                    status_code = 561
+            except:
+                return render_template(f'{page_customer_search}.html'), status_code
 
-    
+            return render_template(f'{page_customer_search}.html', search_results=search_results), status_code
+    except:
+        return redirect(f'{page_customer_search}.html'), 460
+# @app.route(f'/cliente/<id_cliente>/', methods = ['GET'])
+# def exibir_cliente(id_cliente):
+#     status_code = 561
+#     try:
+#         cliente_atual = c.Cliente(id_cliente=id_cliente)
+#         return render_template('cliente.html', cliente=cliente_atual.enviar())#, 200
+#     except:
+#         return render_template('cliente.html', cliente = {}), status_code
 
-if __name__ == "__main__":
-    app.run(debug=True, port='5021')
+#---WIP---
+# @app.route(f'/cliente/<id_cliente>/{page_vehicle_registration}/', methods=['GET','POST'])
+# def vehicle_registration(id_cliente):
+#     try:
+#         status_code = 200
+#         cliente_atual = c.Cliente(id_cliente=id_cliente)
+#         cliente = cliente_atual.enviar()
+#     except:
+#         status_code = 561
+#         cliente = {}
+#     if request.method == 'GET':
+#         return render_template (f'{page_vehicle_registration}.html', cliente = cliente), status_code
+#     status_code = 200
+#     try:
+#         status_code = 561
+#         status_code = 460
+#         placa = request.form['placa']
+#         chassi = request.form['chassi']
+#         marca = request.form['marca']
+#         modelo = request.form['modelo']
+#         ano_fabricacao = request.form['ano_fabricacao']
+#         ano_modelo = request.form['ano_modelo']
+#         cor = request.form['cor']
+#         status_code=550
+#         if placa and chassi:
+#             veiculo_encontrado = f.pesquisar_veiculo(placa,chassi)
+#             if (len(veiculo_encontrado)>0):
+#                 status_code=450
+#                 raise
+#             else:
+#                 status_code=551
+#                 novo_veiculo = c.Veiculo(id_cliente = cliente_atual.id_cliente, placa = placa, chassi = chassi, marca = marca, modelo = modelo, ano_fabricacao = ano_fabricacao, ano_modelo = ano_modelo, cor = cor)
+#                 novo_veiculo.salvar()
+#                 return render_template(f'{page_vehicle_registration}.html', cliente = cliente), 200
+#         else:
+#             status_code = 460
+#             raise
+#     except:
+#         return render_template(f'{page_vehicle_registration}.html',cliente = cliente), status_code
+@app.route(f'/{page_vehicle_registration}/')
+def vehicle_registration():
+    return render_template(f'{page_vehicle_registration}.html')
+
+#---NOT IMPLEMENTED---
+# @app.route('/order/', methods=['GET','POST'])
+# def placeorder():
+#     return render_template('order.html', 501)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)

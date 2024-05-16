@@ -118,14 +118,9 @@ input {
 #cnpj,
 #Telephone,
 #Cellphone,
-#Email1,
-#ano_fabricacao,
-#ano_modelo {
-  width: 255px;
-  height: 30px;
+#Email1 {
+  width: 250px;
   margin-bottom: 10px;
-  margin-top: 10px;
-  border-radius: 5px;
 }
 
 #city {
