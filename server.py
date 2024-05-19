@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, url_for, redirect, jsonify, json
 import requests
 from flask_mysqldb import MySQL
-from backend import db_classes as c
-from backend import db_config as db
 from backend import functions as f
+from backend import db_classes as c
+from backend import db_operations as db
+from backend import db_config as db_config
 
 #global variables
 page_index = 'home'
@@ -12,11 +13,10 @@ page_customer_search = 'search'
 page_vehicle_registration = 'vehicle_registration'
 
 app = Flask(__name__)
-app.config['MYSQL_USER'] = db.user
-app.config['MYSQL_PASSWORD'] = db.password
-app.config['MYSQL_DB'] = db.db
-app.config['MYSQL_HOST'] = db.host
-app.config['CONSUME_RESULTS'] = True
+app.config['MYSQL_USER'] = db_config.user
+app.config['MYSQL_PASSWORD'] = db_config.password
+app.config['MYSQL_DB'] = db_config.db
+app.config['MYSQL_HOST'] = db_config.host
 mysql = MySQL(app)
 
 @app.route('/', methods=['GET'])

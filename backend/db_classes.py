@@ -1,19 +1,7 @@
 from flask_mysqldb import MySQL
 from flask import Flask
 from abc import ABC
-try: 
-    from backend import db_config as db
-except:
-    import db_config as db
-
-#import db_config as db
-
-app = Flask(__name__)
-app.config['MYSQL_USER'] = db.user
-app.config['MYSQL_PASSWORD'] = db.password
-app.config['MYSQL_DB'] = db.db
-app.config['MYSQL_HOST'] = db.host
-mysql = MySQL(app)
+from backend import db_operations as db
 
 class Rscar(ABC):
     def enviar(self):
@@ -25,11 +13,7 @@ class Cliente(Rscar):
     #id_cliente, cpf, cnpj, nome, razao_social, endereco, telefone, email
     def __init__ (self, id_cliente:str = '', cpf:str = '', cnpj:str = '', nome:str = '', razao_social:str = '', endereco:str = '', telefone:str = '', email:str = ''):
         if id_cliente != '':
-            conn = mysql.connection
-            cursor = conn.cursor()
-            cursor.execute('select * from cliente where id_cliente = %s', (id_cliente,))
-            resultado = cursor.fetchall()
-            cursor.close()
+            resultado = db.execute('select * from cliente where id_cliente = %s', (id_cliente,))
             if len(resultado) == 1:
                 self.id_cliente = id_cliente
                 self.cpf = resultado[0][1]
@@ -125,12 +109,7 @@ class Cliente(Rscar):
     
     def salvar(self):
         try:
-            conn = mysql.connection
-            cursor = conn.cursor()
-            arg = (self.cpf, self.cnpj, self.nome, self.razao_social, self.endereco, self.telefone, self.email)
-            cursor.callproc('inserir_cliente', arg)
-            cursor.close()
-            conn.commit()
+            db.procedure('inserir_cliente', (self.cpf, self.cnpj, self.nome, self.razao_social, self.endereco, self.telefone, self.email))
         except:
             print ('ERRO NO INSERT')
             raise Exception
@@ -152,11 +131,7 @@ class Veiculo(Rscar):
     def __init__ (self, id_veiculo:str = '', id_cliente:str = '', placa:str = '', chassi:str = '', marca:str = '', modelo:str = '', ano_fabricacao:str = '', ano_modelo:str = '', cor:str = ''):
         #lista completa: id_veiculo, id_cliente, cpf, cnpj, nome, razao_social, endereco, telefone, email
         if id_veiculo != '':
-            conn = mysql.connection
-            cursor = conn.cursor()
-            cursor.execute('select * from veiculo where id_veiculo = %s', (id_veiculo,))
-            resultado = cursor.fetchall()
-            cursor.close()
+            resultado = db.execute('select * from veiculo where id_veiculo = %s', (id_veiculo,))
             if len(resultado) == 1:
                 self.id_veiculo = id_veiculo
                 self.id_cliente = resultado[0][1]
@@ -263,12 +238,7 @@ class Veiculo(Rscar):
     
     def salvar(self):
         try:
-            conn = mysql.connection
-            cursor = conn.cursor()
-            arg = (self.id_cliente, self.placa, self.chassi, self.marca, self.modelo, self.ano_fabricacao, self.ano_modelo, self.cor)
-            cursor.callproc('inserir_veiculo', arg)
-            cursor.close()
-            conn.commit()
+            db.procedure('inserir_veiculo', (self.id_cliente, self.placa, self.chassi, self.marca, self.modelo, self.ano_fabricacao, self.ano_modelo, self.cor))
         except:
             print ('ERRO NO INSERT')
             raise Exception
