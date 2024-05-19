@@ -1,14 +1,12 @@
 from flask_mysqldb import MySQL
-from flask import Flask
+from flask import Flask, current_app
 from backend import db_config as db
 from backend import db_classes as c
+import server as server
 
-app = Flask(__name__)
-app.config['MYSQL_USER'] = db.user
-app.config['MYSQL_PASSWORD'] = db.password
-app.config['MYSQL_DB'] = db.db
-app.config['MYSQL_HOST'] = db.host
-mysql = MySQL(app)
+
+mysql = server.mysql
+
 
 def procedure(proc_name:str, arg:tuple):
     conn = mysql.connection
